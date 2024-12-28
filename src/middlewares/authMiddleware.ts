@@ -2,7 +2,6 @@
 import { Request, Response, NextFunction } from "express";
 import admin from "../config/firebase";
 
-// Middleware to verify the Firebase ID token for registration
 export const verifyToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const token = req.headers.authorization?.split(" ")[1]; // Get token from the Authorization header
 

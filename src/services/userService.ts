@@ -52,3 +52,5 @@ export const registerUser = async (user: User) => {
     throw new Error(`Error in registerUser: ${error.message}`);
   }
 };
+
+

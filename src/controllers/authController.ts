@@ -83,3 +83,73 @@ export const register = async (req: Request, res: Response, next: NextFunction):
   }
 };
 
+
+export const getUserById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // Step 1: Get the user identifier (firebaseId or email) from the request parameters or query
+    const { userId } = req.params; // Assuming userId is passed as a URL parameter
+    
+    // Step 2: Fetch the user details from the database using Prisma (based on firebaseId or email)
+    const user = await prisma.user.findUnique({
+      where: { firebaseId: userId }, // Adjust this to find by email or another field if needed
+    });
+
+    // Step 3: If user is not found, respond with a 404 error
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return; // Exit the function
+    }
+
+    // Step 4: Respond with the user details, excluding sensitive information like password
+    res.status(200).json({
+      message: "User retrieved successfully",
+      user: {
+        id: user.id,
+        email: user.email,
+        firebaseId: user.firebaseId,
+        fullName: user.fullName,
+        socketId: user.socketId,
+        mobile_number: user.mobile_number,
+      },
+    });
+  } catch (error :any) {
+    console.error("Error retrieving user:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+
+export const getUsers = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // Step 1: Fetch all users from the database using Prisma
+    const users = await prisma.user.findMany();
+
+    // Step 2: If no users are found, respond with a 404 error
+    if (users.length === 0) {
+      res.status(404).json({ message: "No users found" });
+      return; // Exit the function
+    }
+
+    // Step 3: Respond with the user details, excluding sensitive information like password
+    res.status(200).json({
+      message: "Users retrieved successfully",
+      users: users.map(user => ({
+        id: user.id,
+        email: user.email,
+        firebaseId: user.firebaseId,
+        fullName: user.fullName,
+        socketId: user.socketId,
+        mobile_number: user.mobile_number,
+      })),
+    });
+  } catch (error: any) {
+    console.error("Error retrieving users:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
