@@ -2,21 +2,37 @@ import prisma from "../config/prisma";
 import { User } from "../types/user_type"; // Ensure correct import with named export
 import bcrypt from 'bcryptjs';
 import { hashPassword } from "../utils/passwordUtils";
-// Find or create a user based on Firebase ID and email
-// export const findOrCreateUser = async (firebaseId: string, email: string) => {
-//   try {
-//     let user = await prisma.user.findUnique({ where: { firebaseId } });
-//     if (!user) {
-//       user = await prisma.user.create({
-//         data: { firebaseId, email },
-//       });
-//     }
-//     return user;
-//   } catch (error) {
-//     throw new Error(`Error in findOrCreateUser: ${error.message}`);
-//   }
-// };
 
+
+
+export const loginUser = async (email: string, password: string) => {
+  try {
+    // Step 1: Find the user by email
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    // Step 2: If no user is found, throw an error
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Step 3: Compare the provided password with the stored hashed password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    // Step 4: If the password is invalid, throw an error
+    if (!isPasswordValid) {
+      throw new Error("Invalid password");
+    }
+
+    // Step 5: Return the user excluding sensitive information like password
+    const { password: _, ...userWithoutPassword } = user;
+    return userWithoutPassword;
+  } catch (error: any) {
+    console.error("Error in loginUser:", error);
+    throw new Error(`Error in loginUser: ${error.message}`);
+  }
+};
 
 export const registerUser = async (user: User) => {
   const { firebaseId, email, fullName, socketId, password, mobile_number } = user;

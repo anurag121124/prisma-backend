@@ -1,10 +1,12 @@
 import { Request, Response, NextFunction } from "express";
-import { registerUser } from "../services/userService";
+import { loginUser, registerUser } from "../services/userService";
 import { v4 as uuidv4 } from "uuid"; // For generating unique identifiers, if needed
 import admin from "../config/firebase";
 import { User } from "../types/user_type";
 import prisma from "../config/prisma";
 import { z } from "zod"; // Import Zod for validation
+
+
 
 // Define the schema for request validation
 const registerSchema = z.object({
@@ -17,6 +19,57 @@ const registerSchema = z.object({
   socketId: z.string().nonempty("Socket ID is required"),
   mobile_number: z.string().regex(/^\+?[0-9]{7,15}$/, "Invalid mobile number format").nonempty("Mobile number is required"),
 });
+
+const loginSchema = z.object({
+  email: z.string().email("Invalid email format").nonempty("Email is required"),
+  password: z.string().nonempty("Password is required"),
+});
+
+
+export const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    // Step 1: Validate the incoming request body using Zod
+    const validatedData = loginSchema.parse(req.body);
+
+    const { email, password } = validatedData;
+
+
+    // if()
+
+    // Step 2: Call loginUser to authenticate the user
+    const user = await loginUser(email, password);
+
+    // Step 3: Respond with user details (excluding sensitive info)
+    res.status(200).json({
+      message: "User logged in successfully",
+      user: {
+        id: user.id,
+        email: user.email,
+        firebaseId: user.firebaseId,
+        fullName: user.fullName,
+      },
+    });
+  } catch (error: any) {
+    if (error instanceof z.ZodError) {
+      res.status(400).json({
+        message: "Validation failed",
+        errors: error.errors.map((e) => ({ path: e.path, message: e.message })),
+      });
+      return; // Exit the function after responding
+    }
+
+    if (error.message === "User not found" || error.message === "Invalid password") {
+      res.status(401).json({ message: error.message });
+      return;
+    }
+
+    console.error("Error logging in user:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+}
 
 // The `register` function handles user registration
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -153,3 +206,4 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
     });
   }
 };
+
