@@ -1,15 +1,16 @@
 import admin from 'firebase-admin';
-import path from 'path';
-import fs from 'fs';
 
-// Load service account credentials
-const serviceAccountPath = path.join(__dirname, '../../assets/service/backendcab-firebase-adminsdk-tqyn7-1f04093be3.json');
-const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
+const serviceAccountBase64 = process.env.FIREBASE_ADMIN_CREDENTIALS;
+if (!serviceAccountBase64) {
+  throw new Error('Firebase credentials are not set in the environment variables');
+}
 
-// Initialize Firebase Admin SDK
+const serviceAccount = JSON.parse(
+  Buffer.from(serviceAccountBase64, 'base64').toString('utf8')
+);
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
-// Export the admin instance for use in other parts of your app
 export default admin;
