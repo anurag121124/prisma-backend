@@ -1,13 +1,14 @@
 {
-    "compilerOptions": {
-      "target": "ES2020",
-      "module": "CommonJS",
-      "strict": true,
-      "esModuleInterop": true,
-      "resolveJsonModule": true,
-      "outDir": "dist"
-    },
-    "include": ["src", "server.ts"],
-    "exclude": ["node_modules"]
-  }
-  
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "outDir": "./dist",   // Output folder for compiled JavaScript files
+    "rootDir": "./src",   // Folder containing your TypeScript files
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "resolveJsonModule": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}
