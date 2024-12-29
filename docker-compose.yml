@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: backendcab
+    ports:
+      - "5433:5432"  # Change 5432 to 5433
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend-app
+    environment:
+      DATABASE_URL: "postgresql://postgres:root@postgres:5432/backendcab?schema=public"
+    ports:
+      - "4000:4000"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:

@@ -30,6 +30,6 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Auth routes
-app.use("/", authRoutes);
+app.use("/api/auth", authRoutes);
 
 export default app;
