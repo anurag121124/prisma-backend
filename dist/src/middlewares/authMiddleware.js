@@ -12,31 +12,56 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyToken = void 0;
-const firebase_1 = __importDefault(require("../config/firebase"));
-const verifyToken = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+exports.generateToken = exports.verifyToken = exports.verifyTokenMiddleware = void 0;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key"; // Use your secret key for JWT
+// Middleware to verify JWT token
+const verifyTokenMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(" ")[1]; // Get token from the Authorization header
-    // If no token is provided, respond with Unauthorized status
+    const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(" ")[1];
     if (!token) {
-        res.status(401).json({ message: "Unauthorized" });
+        res.status(401).json({ message: "Unauthorized: No token provided" });
         return;
     }
     try {
-        const decodedToken = yield firebase_1.default.auth().verifyIdToken(token); // Verify token with Firebase Admin SDK
-        // Optional: Check for a specific claim to allow registration (e.g., custom claims)
-        if (!decodedToken.email_verified) {
-            res.status(403).json({ message: "Email not verified" }); // Deny registration if email is unverified
-            return;
-        }
-        // Attach Firebase ID and email to the response locals for downstream use
+        const decodedToken = yield (0, exports.verifyToken)(token);
         res.locals.firebaseId = decodedToken.uid;
         res.locals.email = decodedToken.email;
-        next(); // Proceed to the next middleware or route handler
+        next();
     }
     catch (error) {
-        console.error("Error verifying token for registration:", error);
-        res.status(401).json({ message: "Invalid token" });
+        console.error("Error verifying token:", error);
+        res.status(401).json({ message: "Invalid or expired token" });
+    }
+});
+exports.verifyTokenMiddleware = verifyTokenMiddleware;
+// Helper function to verify the JWT token
+const verifyToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        return jsonwebtoken_1.default.verify(token, JWT_SECRET); // Verify the token using the secret key
+    }
+    catch (error) {
+        console.error("Error verifying token:", error);
+        throw new Error("Invalid or expired token");
     }
 });
 exports.verifyToken = verifyToken;
+// Helper function to generate JWT token
+const additionalClaims = {
+    premiumAccount: true
+};
+const generateToken = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // Create a JWT token with the payload and additional claims
+        const token = jsonwebtoken_1.default.sign(Object.assign({ uid: payload.uid, email: payload.email }, additionalClaims), JWT_SECRET, {
+            expiresIn: "1h", // You can set the expiration time as needed
+        });
+        console.log("JWT Token Generated:", token); // Log the generated token for debugging
+        return token;
+    }
+    catch (error) {
+        console.error("Error generating JWT token:", error);
+        throw new Error("Unable to generate token");
+    }
+});
+exports.generateToken = generateToken;

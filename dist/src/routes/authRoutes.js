@@ -6,13 +6,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const authController_1 = require("../controllers/authController");
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
+const authMiddleware_1 = require("../middlewares/authMiddleware");
+const captainController_1 = require("../controllers/captainController");
+const jwtUtils_1 = require("../utils/jwtUtils");
 const router = express_1.default.Router();
 // Rate limiter setup
 const limiter = (0, express_rate_limit_1.default)({
     windowMs: 1 * 60 * 1000, // 1 minute window
     max: 5, // Limit each IP to 5 requests per windowMs
-    message: "Too many requests, please try again later.", // Custom error message
-    statusCode: 429, // HTTP status code for too many requests
+    message: "Too many requests, please try again later.",
+    statusCode: 429,
 });
 // Routes with rate limiter and middleware
 /**
@@ -44,7 +47,7 @@ router.post("/login", limiter, authController_1.login);
  *       200:
  *         description: List of users
  */
-router.get("/user", limiter, authController_1.getUsers);
+router.get("/users", authController_1.getUsers);
 /**
  * @swagger
  * /user/{userId}:
@@ -61,5 +64,6 @@ router.get("/user", limiter, authController_1.getUsers);
  *       200:
  *         description: User details
  */
-router.get("/user/:userId", limiter, authController_1.getUserById);
+router.get("/user/:userId", limiter, authController_1.getUserById, authMiddleware_1.verifyTokenMiddleware);
+router.post("/register/captain", limiter, captainController_1.registerCaptainController), jwtUtils_1.authMiddleware;
 exports.default = router;

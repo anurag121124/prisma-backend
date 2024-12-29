@@ -29,5 +29,5 @@ const swaggerSpec = (0, swagger_jsdoc_1.default)(swaggerOptions);
 // Swagger docs route
 app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swaggerSpec));
 // Auth routes
-app.use("/", authRoutes_1.default);
+app.use("/api/auth", authRoutes_1.default);
 exports.default = app;
