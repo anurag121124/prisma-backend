@@ -46,7 +46,7 @@ router.post("/login", limiter, login);
  *       200:
  *         description: List of users
  */
-router.get("/users", verifyTokenMiddleware, getUsers);
+router.get("/users", getUsers);
 
 /**
  * @swagger

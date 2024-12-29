@@ -21,6 +21,7 @@
     "express-rate-limit": "^7.5.0",
     "firebase": "^11.1.0",
     "firebase-admin": "^13.0.2",
+    "firebase-functions": "^6.2.0",
     "jsonwebtoken": "^9.0.2",
     "prisma": "^6.1.0",
     "swagger-jsdoc": "^6.2.8",
