@@ -5,7 +5,9 @@
   "scripts": {
     "start": "node dist/server.js",
     "dev": "nodemon --watch './**/*.ts' --exec 'ts-node' server.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "prisma:migrate": "npx prisma migrate deploy"
+
   },
   "keywords": [],
   "author": "",

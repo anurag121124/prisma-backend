@@ -1,19 +1,16 @@
-name: Node.js CI/CD Pipeline
+name: Deploy to Railway
 
 on:
   push:
     branches:
-      - main  # Trigger the workflow on push to the 'main' branch
-  pull_request:
-    branches:
-      - main  # Trigger workflow for PRs to 'main' branch
+      - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Check out the repository code
+      # Step 1: Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -21,44 +18,27 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'  # Specify the Node.js version you are using
+          node-version: '18'
+          cache: 'npm'
 
       # Step 3: Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Step 4: Run tests (optional)
-      - name: Run tests
-        run: npm test
-
-      # Step 5: Build the project (e.g., transpile TypeScript to JavaScript)
+      # Step 4: Build the project
       - name: Build project
         run: npm run build
 
-      # Step 6: Deploy to a server or service (e.g., Railway, Docker, or other)
+      # Step 5: Run Prisma migrations
+      - name: Run Prisma migrations
+        run: npm run prisma:migrate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+      # Step 6: Deploy to Railway
       - name: Deploy to Railway
-        run: |
-          # Assuming Railway CLI is installed and configured
-          railway up --projectId ${{ secrets.RAILWAY_PROJECT_ID }}  # Adjust according to your deployment setup
-
-      # Optional: If you want to deploy to a different service, replace with corresponding commands.
-
-  # Optionally, you can add a deployment job for different environments
-  deploy-prod:
-    runs-on: ubuntu-latest
-    needs: build  # Ensure that the build job runs before this one
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: railwayapp/railway-action@v2
         with:
-          node-version: '18'
-
-      - name: Deploy to production
-        run: |
-          echo "Deploying to production..."
-          # Add your deployment commands here, for example for Railway:
-          railway up --env production
+          project_id: ${{ secrets.RAILWAY_PROJECT_ID }}
+          environment_id: ${{ secrets.RAILWAY_ENVIRONMENT_ID }}
+          token: ${{ secrets.RAILWAY_TOKEN }}
