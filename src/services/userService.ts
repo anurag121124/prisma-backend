@@ -2,6 +2,7 @@ import prisma from "../config/prisma";
 import { User } from "../types/user_type"; // Ensure correct import with named export
 import bcrypt from 'bcryptjs';
 import { hashPassword } from "../utils/passwordUtils";
+import { Jwt } from "jsonwebtoken";
 
 
 
@@ -49,6 +50,8 @@ export const registerUser = async (user: User) => {
     // Hash the password (if necessary, though Firebase handles this)
     const hashedPassword = await hashPassword(password);
     console.log(hashPassword,"hashPassword")
+
+    
 
     // Step 2: Create a new user in the database
     const newUser = await prisma.user.create({

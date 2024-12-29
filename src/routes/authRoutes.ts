@@ -1,7 +1,7 @@
 import express from "express";
 import { getUsers, getUserById, register, login } from "../controllers/authController";
-import { verifyToken } from "../middlewares/authMiddleware";
-import rateLimit from 'express-rate-limit';
+import rateLimit from "express-rate-limit";
+import { verifyTokenMiddleware } from "../middlewares/authMiddleware";
 
 const router = express.Router();
 
@@ -9,8 +9,8 @@ const router = express.Router();
 const limiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute window
   max: 5, // Limit each IP to 5 requests per windowMs
-  message: "Too many requests, please try again later.", // Custom error message
-  statusCode: 429, // HTTP status code for too many requests
+  message: "Too many requests, please try again later.",
+  statusCode: 429,
 });
 
 // Routes with rate limiter and middleware
@@ -46,7 +46,7 @@ router.post("/login", limiter, login);
  *       200:
  *         description: List of users
  */
-router.get("/user", limiter, getUsers);
+router.get("/users", verifyTokenMiddleware, getUsers);
 
 /**
  * @swagger
@@ -64,6 +64,9 @@ router.get("/user", limiter, getUsers);
  *       200:
  *         description: User details
  */
-router.get("/user/:userId", limiter, getUserById);
+router.get("/user/:userId", limiter, getUserById,verifyTokenMiddleware);
+
+
 
 export default router;
+

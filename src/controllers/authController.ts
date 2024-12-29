@@ -5,7 +5,7 @@ import admin from "../config/firebase";
 import { User } from "../types/user_type";
 import prisma from "../config/prisma";
 import { z } from "zod"; // Import Zod for validation
-
+import { generateToken } from "../utils/jwtUtils";
 
 
 // Define the schema for request validation
@@ -28,20 +28,18 @@ const loginSchema = z.object({
 
 export const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    // Step 1: Validate the incoming request body using Zod
     const validatedData = loginSchema.parse(req.body);
-
     const { email, password } = validatedData;
 
-
-    // if()
-
-    // Step 2: Call loginUser to authenticate the user
+    // Authenticate the user
     const user = await loginUser(email, password);
 
-    // Step 3: Respond with user details (excluding sensitive info)
+    // Generate JWT token
+    const token = generateToken({ id: user.id, email: user.email });
+
     res.status(200).json({
       message: "User logged in successfully",
+      token, // Send the token to the client
       user: {
         id: user.id,
         email: user.email,
@@ -55,60 +53,39 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
         message: "Validation failed",
         errors: error.errors.map((e) => ({ path: e.path, message: e.message })),
       });
-      return; // Exit the function after responding
-    }
-
-    if (error.message === "User not found" || error.message === "Invalid password") {
-      res.status(401).json({ message: error.message });
       return;
     }
-
-    console.error("Error logging in user:", error);
-    res.status(500).json({
-      message: "Internal server error",
-      error: error.message,
-    });
+    res.status(401).json({ message: error.message });
   }
-}
+};
 
 // The `register` function handles user registration
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    // Step 1: Validate the incoming request body using Zod
     const validatedData = registerSchema.parse(req.body);
-
     const { email, password, fullName, socketId, mobile_number } = validatedData;
 
-    // Step 2: Check if the user already exists in the database
-    const existingUser = await prisma.user.findUnique({ where: { email } });
-    if (existingUser) {
-      res.status(409).json({ message: "User already exists" });
-      return; // Ensure the function exits here
-    }
+    const firebaseUser = await admin.auth().createUser({ email, password });
 
-    // Step 3: Create the user in Firebase Authentication
-    const firebaseUser = await admin.auth().createUser({
-      email,
-      password,
-    });
-
-    // Step 4: Save the user in the database
     const user: User = {
       firebaseId: firebaseUser.uid,
       email,
       fullName,
       socketId,
-      password, // Firebase already hashes the password
+      password,
       mobile_number,
     };
 
     const newUser = await registerUser(user);
 
-    // Step 5: Respond with user details (excluding sensitive info)
+    // Generate JWT token
+    const token = generateToken({ id: newUser.id, email: newUser.email });
+
     res.status(201).json({
       message: "User registered successfully",
+      token, // Send the token to the client
       user: {
-        id: newUser.id, // Assuming `registerUser` returns the user including the database ID
+        id: newUser.id,
         email: newUser.email,
         firebaseId: newUser.firebaseId,
         fullName: newUser.fullName,
@@ -120,19 +97,9 @@ export const register = async (req: Request, res: Response, next: NextFunction):
         message: "Validation failed",
         errors: error.errors.map((e) => ({ path: e.path, message: e.message })),
       });
-      return; // Exit the function after responding
+      return;
     }
-
-    if (error.code === "auth/email-already-exists") {
-      res.status(409).json({ message: "Email is already registered" });
-      return; // Exit the function after responding
-    }
-
-    console.error("Error registering user:", error);
-    res.status(500).json({
-      message: "Internal server error",
-      error: error.message,
-    });
+    res.status(500).json({ message: error.message });
   }
 };
 
