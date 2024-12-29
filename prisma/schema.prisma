@@ -7,14 +7,118 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum RideStatus {
+  PENDING
+  ACCEPTED
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum CaptainStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum VehicleType {
+  CAR
+  MOTORCYCLE
+  AUTO
+}
+
 model User {
   id            String   @id @default(cuid())
   email         String   @unique
   fullName      String
-  socketId      String
+  socketId      String? // Made optional as socket connections are temporary
   password      String
-  mobile_number String
+  mobile_number String // Changed to camelCase naming convention
   firebaseId    String   @unique
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  rides         Ride[]
+
+  @@map("users") // Added table mapping for consistency
+}
+
+model Ride {
+  id          String     @id @default(cuid())
+  userId      String
+  captainId   String?
+  pickup      String
+  destination String
+  fare        Float
+  status      RideStatus @default(PENDING)
+  duration    Int? // in seconds
+  distance    Float? // Changed to Float for more precise distances in kilometers
+  paymentId   String? // Fixed casing
+  orderId     String?
+  signature   String?
+  otp         String
+  createdAt   DateTime   @default(now()) // Added tracking timestamps
+  updatedAt   DateTime   @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id])
+  captain Captain? @relation(fields: [captainId], references: [id])
+
+  @@index([userId], map: "rides_userId_idx")
+  @@index([captainId], map: "rides_captainId_idx")
+  @@map("rides")
+}
+
+model Captain {
+  id        String        @id @default(cuid())
+  firstName String // Fixed casing
+  lastName  String?
+  email     String        @unique
+  password  String
+  socketId  String?
+  status    CaptainStatus @default(INACTIVE)
+  createdAt DateTime      @default(now()) // Added tracking timestamps
+  updatedAt DateTime      @updatedAt
+
+  vehicle  Vehicle?
+  location Location?
+  rides    Ride[]
+
+  @@map("captains")
+}
+
+model Vehicle {
+  id          String      @id @default(cuid())
+  color       String
+  plate       String      @unique // Added unique constraint
+  capacity    Int
+  vehicleType VehicleType
+  captainId   String      @unique // Added unique constraint
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  captain Captain @relation(fields: [captainId], references: [id])
+
+  @@map("vehicles")
+}
+
+model Location {
+  id        String   @id @default(cuid())
+  latitude  Float
+  longitude Float
+  captainId String   @unique
+  updatedAt DateTime @updatedAt // Added timestamp for location updates
+
+  captain Captain @relation(fields: [captainId], references: [id])
+
+  @@map("locations")
+}
+
+model BlacklistToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@index([token], map: "blacklist_token_token_idx")
+  @@index([createdAt], map: "blacklist_token_createdAt_idx")
+  @@map("blacklist_tokens")
 }

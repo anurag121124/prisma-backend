@@ -1,5 +1,5 @@
 import prisma from "../config/prisma";
-import { User } from "../types/user_type"; // Ensure correct import with named export
+import { User } from "../types/types"; // Ensure correct import with named export
 import bcrypt from 'bcryptjs';
 import { hashPassword } from "../utils/passwordUtils";
 import { Jwt } from "jsonwebtoken";

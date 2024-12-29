@@ -1,8 +1,16 @@
 import bcrypt from 'bcryptjs';
-import { User } from '../types/user_type';
+import { User } from '../types/types';
+import { AUTH_CONSTANTS } from './constants';
 
-export async function hashPassword(password: string): Promise<string> {
-    const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-    return hashedPassword;
-  }
+  
+  export const hashPassword = async (password: string): Promise<string> => {
+    return bcrypt.hash(password, AUTH_CONSTANTS.SALT_ROUNDS);
+  };
+  
+  export const comparePasswords = async (
+    password: string,
+    hashedPassword: string
+  ): Promise<boolean> => {
+    return bcrypt.compare(password, hashedPassword);
+  };
+  

@@ -51,3 +51,5 @@ export const generateToken = async (payload: { uid: string; [key: string]: any }
     throw new Error("Unable to generate token");
   }
 };
+
+

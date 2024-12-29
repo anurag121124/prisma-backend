@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { loginUser, registerUser } from "../services/userService";
 import { v4 as uuidv4 } from "uuid"; // For generating unique identifiers, if needed
 import admin from "../config/firebase";
-import { User } from "../types/user_type";
+import { User } from "../types/types";
 import prisma from "../config/prisma";
 import { z } from "zod"; // Import Zod for validation
 import { generateToken } from "../utils/jwtUtils";

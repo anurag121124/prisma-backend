@@ -2,6 +2,8 @@ import express from "express";
 import { getUsers, getUserById, register, login } from "../controllers/authController";
 import rateLimit from "express-rate-limit";
 import { verifyTokenMiddleware } from "../middlewares/authMiddleware";
+import {registerCaptainController } from "../controllers/captainController";
+import { authMiddleware } from "../utils/jwtUtils";
 
 const router = express.Router();
 
@@ -65,6 +67,7 @@ router.get("/users", getUsers);
  *         description: User details
  */
 router.get("/user/:userId", limiter, getUserById,verifyTokenMiddleware);
+router.post("/register/captain", limiter, registerCaptainController),authMiddleware;
 
 
 

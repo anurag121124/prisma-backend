@@ -1,0 +1,78 @@
+2024-12-30 02:52:53 [ERROR]: PrismaClientKnownRequestError: 
+Invalid `tx.captain.create()` invocation in
+/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:33:43
+
+  30 
+  31 const hashedPassword = await hashPassword(password);
+  32 
+→ 33 const newCaptain = await tx.captain.create(
+Unique constraint failed on the fields: (`plate`)
+    at qn.handleRequestError (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at qn.handleAndLogRequestError (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/node_modules/@prisma/client/runtime/library.js:121:6640)
+    at qn.request (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/node_modules/@prisma/client/runtime/library.js:121:6347)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async l (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/node_modules/@prisma/client/runtime/library.js:130:9616)
+2024-12-30 02:52:53 [ERROR]: AuthError: Registration failed. Please try again later.
+    at /Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:80:11
+    at Generator.throw (<anonymous>)
+    at rejected (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:6:65)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2024-12-30 02:59:30 [ERROR]: PrismaClientKnownRequestError: 
+Invalid `tx.captain.create()` invocation in
+/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:33:43
+
+  30 
+  31 const hashedPassword = await hashPassword(password);
+  32 
+→ 33 const newCaptain = await tx.captain.create(
+Unique constraint failed on the fields: (`plate`)
+    at qn.handleRequestError (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at qn.handleAndLogRequestError (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/node_modules/@prisma/client/runtime/library.js:121:6640)
+    at qn.request (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/node_modules/@prisma/client/runtime/library.js:121:6347)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async l (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/node_modules/@prisma/client/runtime/library.js:130:9616)
+2024-12-30 02:59:30 [ERROR]: AuthError: Registration failed. Please try again later.
+    at /Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:94:11
+    at Generator.throw (<anonymous>)
+    at rejected (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:6:65)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2024-12-30 03:02:30 [ERROR]: AuthError: Vehicle with plate up21cf6956 already exists
+    at /Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:42:17
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2024-12-30 03:02:30 [ERROR]: AuthError: Vehicle with plate up21cf6956 already exists
+    at /Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:42:17
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2024-12-30 03:07:37 [ERROR]: AuthError: Email already registered
+    at /Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:30:15
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2024-12-30 03:07:37 [ERROR]: AuthError: Email already registered
+    at /Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:30:15
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2024-12-30 03:07:50 [ERROR]: AuthError: Vehicle with plate up21cf6957 already exists
+    at /Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:42:17
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2024-12-30 03:07:50 [ERROR]: AuthError: Vehicle with plate up21cf6957 already exists
+    at /Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:42:17
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2024-12-30 03:07:57 [ERROR]: AuthError: Socket ID is already in use
+    at /Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:52:15
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2024-12-30 03:07:57 [ERROR]: AuthError: Socket ID is already in use
+    at /Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:52:15
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:5:58)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
