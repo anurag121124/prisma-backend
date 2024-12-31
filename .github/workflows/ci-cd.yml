@@ -1,4 +1,4 @@
-name: Deploy to Railway
+name: Deploy to Render
 
 on:
   push:
@@ -33,12 +33,13 @@ jobs:
       - name: Run Prisma migrations
         run: npm run prisma:migrate
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}  # Add your secret environment variable here
 
-      # Step 6: Deploy to Railway
-      - name: Deploy to Railway
-        uses: railwayapp/railway-action@v2
-        with:
-          project_id: ${{ secrets.RAILWAY_PROJECT_ID }}
-          environment_id: ${{ secrets.RAILWAY_ENVIRONMENT_ID }}
-          token: ${{ secrets.RAILWAY_TOKEN }}
+      # Step 6: Deploy to Render
+      - name: Deploy to Render
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"serviceId": "your-service-id"}' \
+            https://api.render.com/v1/services/restart
