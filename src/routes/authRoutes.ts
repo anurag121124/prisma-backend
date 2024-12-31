@@ -1,75 +1,149 @@
-import express from "express";
+import { Router } from "express";
+import { rateLimit } from "express-rate-limit";
 import { getUsers, getUserById, register, login } from "../controllers/authController";
-import rateLimit from "express-rate-limit";
+import { registerCaptainController } from "../controllers/captainController";
 import { verifyTokenMiddleware } from "../middlewares/authMiddleware";
-import {registerCaptainController } from "../controllers/captainController";
 import { authMiddleware } from "../utils/jwtUtils";
 
-const router = express.Router();
+class AuthRouter {
+  public router = Router();
+  
+  private authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 5,
+    message: { status: 'error', message: 'Too many auth requests.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+  });
 
-// Rate limiter setup
-const limiter = rateLimit({
-  windowMs: 1 * 60 * 1000, // 1 minute window
-  max: 5, // Limit each IP to 5 requests per windowMs
-  message: "Too many requests, please try again later.",
-  statusCode: 429,
-});
+  private generalLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 10,
+    message: { status: 'error', message: 'Request limit exceeded.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+  });
 
-// Routes with rate limiter and middleware
+  constructor() {
+    this.initializeRoutes();
+  }
 
-/**
- * @swagger
- * /register:
- *   post:
- *     description: Register a new user
- *     responses:
- *       200:
- *         description: User registered successfully
- */
-router.post("/register", limiter, register);
+  private initializeRoutes(): void {
+    /**
+     * @swagger
+     * /auth/users/register:
+     *   post:
+     *     summary: Register a new user
+     *     tags: [Users]
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               username:
+     *                 type: string
+     *               password:
+     *                 type: string
+     *     responses:
+     *       200:
+     *         description: User registered successfully
+     *       429:
+     *         description: Too many auth requests
+     */
+    this.router.post("/auth/users/register", this.authLimiter, register);
 
-/**
- * @swagger
- * /login:
- *   post:
- *     description: Login an existing user
- *     responses:
- *       200:
- *         description: User logged in successfully
- */
-router.post("/login", limiter, login);
+    /**
+     * @swagger
+     * /auth/users/login:
+     *   post:
+     *     summary: Login a user
+     *     tags: [Users]
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               username:
+     *                 type: string
+     *               password:
+     *                 type: string
+     *     responses:
+     *       200:
+     *         description: User logged in successfully
+     *       429:
+     *         description: Too many auth requests
+     */
+    this.router.post("/auth/users/login", this.authLimiter, login);
 
-/**
- * @swagger
- * /user:
- *   get:
- *     description: Get a list of users
- *     responses:
- *       200:
- *         description: List of users
- */
-router.get("/users", getUsers);
+    /**
+     * @swagger
+     * /users:
+     *   get:
+     *     summary: Get all users
+     *     tags: [Users]
+     *     responses:
+     *       200:
+     *         description: A list of users
+     *       401:
+     *         description: Unauthorized
+     *       429:
+     *         description: Request limit exceeded
+     */
+    this.router.get("/users", verifyTokenMiddleware, this.generalLimiter, getUsers);
 
-/**
- * @swagger
- * /user/{userId}:
- *   get:
- *     description: Get user details by ID
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         description: User ID
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: User details
- */
-router.get("/user/:userId", limiter, getUserById,verifyTokenMiddleware);
-router.post("/register/captain", limiter, registerCaptainController),authMiddleware;
+    /**
+     * @swagger
+     * /users/{userId}:
+     *   get:
+     *     summary: Get user by ID
+     *     tags: [Users]
+     *     parameters:
+     *       - in: path
+     *         name: userId
+     *         required: true
+     *         schema:
+     *           type: string
+     *     responses:
+     *       200:
+     *         description: User details
+     *       401:
+     *         description: Unauthorized
+     *       429:
+     *         description: Request limit exceeded
+     */
+    this.router.get("/users/:userId", verifyTokenMiddleware, this.generalLimiter, getUserById);
 
+    /**
+     * @swagger
+     * /auth/captain/register:
+     *   post:
+     *     summary: Register a new captain
+     *     tags: [Captains]
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               username:
+     *                 type: string
+     *               password:
+     *                 type: string
+     *     responses:
+     *       200:
+     *         description: Captain registered successfully
+     *       401:
+     *         description: Unauthorized
+     *       429:
+     *         description: Too many auth requests
+     */
+    this.router.post("/auth/captain/register", [authMiddleware, this.authLimiter], registerCaptainController);
+  }
+}
 
-
-export default router;
-
+export default new AuthRouter().router;

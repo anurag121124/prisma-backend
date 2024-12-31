@@ -76,3 +76,15 @@ Unique constraint failed on the fields: (`plate`)
     at Generator.next (<anonymous>)
     at fulfilled (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:5:58)
     at processTicksAndRejections (node:internal/process/task_queues:95:5)
+2024-12-31 22:20:57 [ERROR]: AuthError: Email already registered
+    at /Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:30:15
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Proxy._transactionWithCallback (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/node_modules/@prisma/client/runtime/library.js:130:7983)
+    at async registerCaptain (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:21:12)
+    at async registerCaptainController (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/controllers/captainController.ts:15:41)
+2024-12-31 22:20:57 [ERROR]: AuthError: Email already registered
+    at /Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:30:15
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Proxy._transactionWithCallback (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/node_modules/@prisma/client/runtime/library.js:130:7983)
+    at async registerCaptain (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:21:12)
+    at async registerCaptainController (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/controllers/captainController.ts:15:41)
