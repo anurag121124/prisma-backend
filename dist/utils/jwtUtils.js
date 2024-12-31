@@ -58,7 +58,7 @@ exports.verifyToken = verifyToken;
 const authMiddleware = (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
-        if (!authHeader?.startsWith("Bearer ")) {
+        if (!(authHeader === null || authHeader === void 0 ? void 0 : authHeader.startsWith("Bearer "))) {
             res.status(401).json({
                 success: false,
                 message: "Authorization header missing or invalid format"

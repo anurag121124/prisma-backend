@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -24,12 +33,12 @@ const loginSchema = zod_1.z.object({
     email: zod_1.z.string().email("Invalid email format").nonempty("Email is required"),
     password: zod_1.z.string().nonempty("Password is required"),
 });
-const login = async (req, res, next) => {
+const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const validatedData = loginSchema.parse(req.body);
         const { email, password } = validatedData;
         // Authenticate the user
-        const user = await (0, userService_1.loginUser)(email, password);
+        const user = yield (0, userService_1.loginUser)(email, password);
         // Generate JWT token
         const token = (0, jwtUtils_1.generateToken)({ id: user.id, email: user.email });
         res.status(200).json({
@@ -53,14 +62,14 @@ const login = async (req, res, next) => {
         }
         res.status(401).json({ message: error.message });
     }
-};
+});
 exports.login = login;
 // The `register` function handles user registration
-const register = async (req, res, next) => {
+const register = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const validatedData = registerSchema.parse(req.body);
         const { email, password, fullName, socketId, mobile_number } = validatedData;
-        const firebaseUser = await firebase_1.default.auth().createUser({ email, password });
+        const firebaseUser = yield firebase_1.default.auth().createUser({ email, password });
         const user = {
             firebaseId: firebaseUser.uid,
             email,
@@ -69,7 +78,7 @@ const register = async (req, res, next) => {
             password,
             mobile_number,
         };
-        const newUser = await (0, userService_1.registerUser)(user);
+        const newUser = yield (0, userService_1.registerUser)(user);
         // Generate JWT token
         const token = (0, jwtUtils_1.generateToken)({ id: newUser.id, email: newUser.email });
         res.status(201).json({
@@ -93,14 +102,14 @@ const register = async (req, res, next) => {
         }
         res.status(500).json({ message: error.message });
     }
-};
+});
 exports.register = register;
-const getUserById = async (req, res) => {
+const getUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Step 1: Get the user identifier (firebaseId or email) from the request parameters or query
         const { userId } = req.params; // Assuming userId is passed as a URL parameter
         // Step 2: Fetch the user details from the database using Prisma (based on firebaseId or email)
-        const user = await prisma_1.default.user.findUnique({
+        const user = yield prisma_1.default.user.findUnique({
             where: { firebaseId: userId }, // Adjust this to find by email or another field if needed
         });
         // Step 3: If user is not found, respond with a 404 error
@@ -128,12 +137,12 @@ const getUserById = async (req, res) => {
             error: error.message,
         });
     }
-};
+});
 exports.getUserById = getUserById;
-const getUsers = async (req, res) => {
+const getUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Step 1: Fetch all users from the database using Prisma
-        const users = await prisma_1.default.user.findMany();
+        const users = yield prisma_1.default.user.findMany();
         // Step 2: If no users are found, respond with a 404 error
         if (users.length === 0) {
             res.status(404).json({ message: "No users found" });
@@ -159,5 +168,5 @@ const getUsers = async (req, res) => {
             error: error.message,
         });
     }
-};
+});
 exports.getUsers = getUsers;
