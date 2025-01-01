@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  cabbookingnode-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: ["npm", "start"]
