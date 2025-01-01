@@ -1,8 +1,7 @@
-# Use Node.js base image
 FROM node:18-alpine
 
 # Set the working directory inside the container
-WORKDIR /app
+WORKDIR /src
 
 # Copy package.json and package-lock.json first for dependency installation
 COPY package*.json ./
@@ -24,3 +23,4 @@ EXPOSE 4000
 
 # Start the application
 CMD ["node", "dist/server.js"]
+
