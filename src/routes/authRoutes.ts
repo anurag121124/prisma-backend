@@ -1,34 +1,17 @@
 import { Router } from "express";
-import { rateLimit } from "express-rate-limit";
-import { getUsers, getUserById, register, login } from "../controllers/authController";
+import { authLimiter } from "../middlewares/rateLimiter";
+import { 
+  getUsers, 
+  getUserById, 
+  register, 
+  login 
+} from "../controllers/authController";
 import { registerCaptainController } from "../controllers/captainController";
 import { verifyTokenMiddleware } from "../middlewares/authMiddleware";
 import { authMiddleware } from "../utils/jwtUtils";
+const router = Router();
+ 
 
-class AuthRouter {
-  public router = Router();
-  
-  private authLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 5,
-    message: { status: 'error', message: 'Too many auth requests.' },
-    standardHeaders: true,
-    legacyHeaders: false,
-  });
-
-  private generalLimiter = rateLimit({
-    windowMs: 60 * 1000,
-    max: 10,
-    message: { status: 'error', message: 'Request limit exceeded.' },
-    standardHeaders: true,
-    legacyHeaders: false,
-  });
-
-  constructor() {
-    this.initializeRoutes();
-  }
-
-  private initializeRoutes(): void {
     /**
      * @swagger
      * /auth/users/register:
@@ -52,7 +35,7 @@ class AuthRouter {
      *       429:
      *         description: Too many auth requests
      */
-    this.router.post("/auth/users/register", this.authLimiter, register);
+  router.post("/auth/users/register", authLimiter, register);
 
     /**
      * @swagger
@@ -77,7 +60,7 @@ class AuthRouter {
      *       429:
      *         description: Too many auth requests
      */
-    this.router.post("/auth/users/login", this.authLimiter, login);
+router.post("/auth/users/login", authLimiter, login);
 
     /**
      * @swagger
@@ -93,7 +76,7 @@ class AuthRouter {
      *       429:
      *         description: Request limit exceeded
      */
-    this.router.get("/users", verifyTokenMiddleware, this.generalLimiter, getUsers);
+router.get("/users", verifyTokenMiddleware, authLimiter, getUsers);
 
     /**
      * @swagger
@@ -115,7 +98,7 @@ class AuthRouter {
      *       429:
      *         description: Request limit exceeded
      */
-    this.router.get("/users/:userId", verifyTokenMiddleware, this.generalLimiter, getUserById);
+router.get("/users/:userId", verifyTokenMiddleware,authLimiter, getUserById);
 
     /**
      * @swagger
@@ -142,8 +125,11 @@ class AuthRouter {
      *       429:
      *         description: Too many auth requests
      */
-    this.router.post("/auth/captain/register", [authMiddleware, this.authLimiter], registerCaptainController);
-  }
-}
+    router.post(
+      "/auth/captain/register",
+      [authMiddleware, authLimiter],
+      registerCaptainController
+    );
+    
 
-export default new AuthRouter().router;
+ export default router;

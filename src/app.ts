@@ -5,8 +5,8 @@ import compression from "compression";
 import rateLimit from "express-rate-limit";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
-import authRoutes from "./src/routes/authRoutes";
-import { verifyToken } from "./src/utils/jwtUtils";
+import { verifyToken } from "./utils/jwtUtils";
+import router from "./routes/masterRouter";
 
 // Configuration constants
 const CONFIG = {
@@ -133,7 +133,7 @@ class App {
   }
 
   private initializeRoutes(): void {
-    this.app.use(`/api/${CONFIG.API_VERSION}`, authRoutes);
+    this.app.use(`/api/${CONFIG.API_VERSION}`,router);
 
     this.app.get("/health", (_req, res) => {
       res.status(200).json({ status: "healthy" });

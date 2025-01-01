@@ -3,8 +3,8 @@
   "version": "2.1.0",
   "main": "dist/server.js",
   "scripts": {
-    "start": "node dist/server.js",
-    "dev": "nodemon --watch './src/**/*.ts' --exec 'ts-node' ./server.ts",
+    "start": "node dist/src/server.js",
+    "dev": "nodemon --watch './src/**/*.ts' --exec 'ts-node' ./src/server.ts",
     "build": "tsc",
     "lint": "eslint './src/**/*.{ts,js}' --fix"
   },
@@ -41,6 +41,7 @@
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^22.10.2",
+    "@types/socket.io": "^3.0.1",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.7",
     "nodemon": "^3.1.9",
