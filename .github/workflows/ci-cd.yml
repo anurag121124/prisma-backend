@@ -23,9 +23,9 @@ jobs:
         run: npm install
 
       - name: Authenticate with Google Cloud
-        uses: google-github-actions/auth@v1
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+        run: |
+          echo '${{ secrets.GCP_SA_KEY }}' > /tmp/gcp-key.json
+          gcloud auth activate-service-account --key-file=/tmp/gcp-key.json
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
@@ -36,11 +36,17 @@ jobs:
         run: |
           wget https://storage.googleapis.com/cloudsql-proxy/v1.33.3/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
           chmod +x cloud_sql_proxy
-          ./cloud_sql_proxy -instances=${{ secrets.CLOUD_SQL_INSTANCE }} -dir=/cloudsql &
+          ./cloud_sql_proxy -instances=${{ secrets.CLOUD_SQL_INSTANCE }}=tcp:5432 &
+
+      - name: Debug Cloud SQL Proxy
+        run: sleep 5 && ps aux | grep cloud_sql_proxy
 
       - name: Build and Push Docker Image
         run: |
           gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/prisma-backend
+
+      - name: Debug Cloud Build Logs
+        run: gcloud builds list --limit=5
 
       - name: Deploy to Cloud Run
         run: |
@@ -50,4 +56,4 @@ jobs:
             --region us-central1 \
             --allow-unauthenticated \
             --add-cloudsql-instances=${{ secrets.CLOUD_SQL_INSTANCE }} \
-            --set-env-vars DATABASE_URL="postgresql://${{ secrets.DATABASE_USER_GCP }}:${{ secrets.DATABASE_PASSWORD_GCP }}@127.0.0.1:5432/${{ secrets.DATABASE_NAME_GCP }}"
+            --set-env-vars DATABASE_URL="postgresql://${{ secrets.DATABASE_USER_GCP }}:${{ secrets.DATABASE_PASSWORD_GCP }}@/cloudsql/${{ secrets.CLOUD_SQL_INSTANCE }}/${{ secrets.DATABASE_NAME_GCP }}"
