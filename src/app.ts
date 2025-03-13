@@ -5,7 +5,6 @@ import compression from "compression";
 import rateLimit from "express-rate-limit";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
-import { verifyToken } from "./utils/jwtUtils";
 import router from "./routes/masterRouter";
 
 // Configuration constants
@@ -125,7 +124,7 @@ class App {
 
   private initializeErrorHandling(): void {
     this.app.use(
-      (err: Error, _req: Request, res: Response, _next: NextFunction) => {
+      (err: Error, _req: Request, res: Response) => {
         console.error(`[${new Date().toISOString()}] Error:`, err.message);
         res.status(500).json({ error: "Internal Server Error" });
       }

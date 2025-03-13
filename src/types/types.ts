@@ -1,8 +1,7 @@
-import { PrismaClient, RideStatus, CaptainStatus, VehicleType } from '@prisma/client';
-import jwt, { Secret, JwtPayload } from 'jsonwebtoken';
+import {  RideStatus, CaptainStatus, VehicleType } from '@prisma/client';
+import  {  JwtPayload } from 'jsonwebtoken';
 
 // Initialize Prisma Client
-const prisma = new PrismaClient();
 
 // Types for the User model
 export type User = {

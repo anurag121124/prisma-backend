@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key"; // Use your secret key for JWT
 
@@ -14,6 +14,12 @@ export const verifyTokenMiddleware = async (req: Request, res: Response, next: N
 
   try {
     const decodedToken = await verifyToken(token);
+    
+    if (typeof decodedToken === "string") {
+      res.status(401).json({ message: "Invalid token format" });
+      return;
+    }
+
     res.locals.firebaseId = decodedToken.uid;
     res.locals.email = decodedToken.email;
     next();
@@ -24,7 +30,7 @@ export const verifyTokenMiddleware = async (req: Request, res: Response, next: N
 };
 
 // Helper function to verify the JWT token
-export const verifyToken = async (token: string): Promise<any> => {
+export const verifyToken = async (token: string): Promise<JwtPayload | string> => {
   try {
     return jwt.verify(token, JWT_SECRET); // Verify the token using the secret key
   } catch (error) {
@@ -38,18 +44,14 @@ const additionalClaims = {
   premiumAccount: true
 };
 
-export const generateToken = async (payload: { uid: string; [key: string]: any }): Promise<string> => {
+export const generateToken = async (payload: { uid: string; email: string }): Promise<string> => {
   try {
     // Create a JWT token with the payload and additional claims
-    const token = jwt.sign({ uid: payload.uid, email: payload.email, ...additionalClaims }, JWT_SECRET, {
+    return jwt.sign({ uid: payload.uid, email: payload.email, ...additionalClaims }, JWT_SECRET, {
       expiresIn: "1h", // You can set the expiration time as needed
     });
-    console.log("JWT Token Generated:", token); // Log the generated token for debugging
-    return token;
   } catch (error) {
     console.error("Error generating JWT token:", error);
     throw new Error("Unable to generate token");
   }
 };
-
-

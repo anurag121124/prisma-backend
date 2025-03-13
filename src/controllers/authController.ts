@@ -1,12 +1,10 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { loginUser, registerUser } from "../services/userService";
-import { v4 as uuidv4 } from "uuid"; // For generating unique identifiers, if needed
 import admin from "../config/firebase";
 import { User } from "../types/types";
 import prisma from "../config/prisma";
 import { z } from "zod"; // Import Zod for validation
 import { generateToken } from "../utils/jwtUtils";
-
 
 // Define the schema for request validation
 const registerSchema = z.object({
@@ -25,21 +23,17 @@ const loginSchema = z.object({
   password: z.string().nonempty("Password is required"),
 });
 
-
-export const login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const validatedData = loginSchema.parse(req.body);
     const { email, password } = validatedData;
 
-    // Authenticate the user
     const user = await loginUser(email, password);
-
-    // Generate JWT token
     const token = generateToken({ id: user.id, email: user.email });
 
     res.status(200).json({
       message: "User logged in successfully",
-      token, // Send the token to the client
+      token,
       user: {
         id: user.id,
         email: user.email,
@@ -47,7 +41,7 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
         fullName: user.fullName,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       res.status(400).json({
         message: "Validation failed",
@@ -55,12 +49,11 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
       });
       return;
     }
-    res.status(401).json({ message: error.message });
+    res.status(401).json({ message: (error as Error).message });
   }
 };
 
-// The `register` function handles user registration
-export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     const validatedData = registerSchema.parse(req.body);
     const { email, password, fullName, socketId, mobile_number } = validatedData;
@@ -77,13 +70,11 @@ export const register = async (req: Request, res: Response, next: NextFunction):
     };
 
     const newUser = await registerUser(user);
-
-    // Generate JWT token
     const token = generateToken({ id: newUser.id, email: newUser.email });
 
     res.status(201).json({
       message: "User registered successfully",
-      token, // Send the token to the client
+      token,
       user: {
         id: newUser.id,
         email: newUser.email,
@@ -91,7 +82,7 @@ export const register = async (req: Request, res: Response, next: NextFunction):
         fullName: newUser.fullName,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       res.status(400).json({
         message: "Validation failed",
@@ -99,28 +90,22 @@ export const register = async (req: Request, res: Response, next: NextFunction):
       });
       return;
     }
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: (error as Error).message });
   }
 };
 
-
 export const getUserById = async (req: Request, res: Response): Promise<void> => {
   try {
-    // Step 1: Get the user identifier (firebaseId or email) from the request parameters or query
-    const { userId } = req.params; // Assuming userId is passed as a URL parameter
-    
-    // Step 2: Fetch the user details from the database using Prisma (based on firebaseId or email)
+    const { userId } = req.params;
     const user = await prisma.user.findUnique({
-      where: { firebaseId: userId }, // Adjust this to find by email or another field if needed
+      where: { firebaseId: userId },
     });
 
-    // Step 3: If user is not found, respond with a 404 error
     if (!user) {
       res.status(404).json({ message: "User not found" });
-      return; // Exit the function
+      return;
     }
 
-    // Step 4: Respond with the user details, excluding sensitive information like password
     res.status(200).json({
       message: "User retrieved successfully",
       user: {
@@ -132,28 +117,24 @@ export const getUserById = async (req: Request, res: Response): Promise<void> =>
         mobile_number: user.mobile_number,
       },
     });
-  } catch (error :any) {
+  } catch (error: unknown) {
     console.error("Error retrieving user:", error);
     res.status(500).json({
       message: "Internal server error",
-      error: error.message,
+      error: (error as Error).message,
     });
   }
 };
 
-
 export const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
-    // Step 1: Fetch all users from the database using Prisma
     const users = await prisma.user.findMany();
 
-    // Step 2: If no users are found, respond with a 404 error
     if (users.length === 0) {
       res.status(404).json({ message: "No users found" });
-      return; // Exit the function
+      return;
     }
 
-    // Step 3: Respond with the user details, excluding sensitive information like password
     res.status(200).json({
       message: "Users retrieved successfully",
       users: users.map(user => ({
@@ -165,12 +146,11 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
         mobile_number: user.mobile_number,
       })),
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error retrieving users:", error);
     res.status(500).json({
       message: "Internal server error",
-      error: error.message,
+      error: (error as Error).message,
     });
   }
 };
-

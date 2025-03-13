@@ -6,6 +6,7 @@ import { hashPassword, comparePasswords } from '../utils/passwordUtils';
 import { AUTH_CONSTANTS } from '../utils/constants';
 import { logger } from '../utils/logger';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -43,11 +44,10 @@ export const registerCaptain = async (captain: CreateCaptain) => {
         }
       }
 
-
       const existingSocketId = await tx.captain.findFirst({
         where: { socketId },
       });
-      
+
       if (existingSocketId) {
         throw new AuthError('Socket ID is already in use', 409);
       }
@@ -96,11 +96,10 @@ export const registerCaptain = async (captain: CreateCaptain) => {
         { expiresIn: AUTH_CONSTANTS.JWT_EXPIRY }
       );
 
-      // Sanitize the response to remove sensitive data
-      const { password: _, ...sanitizedCaptain } = newCaptain;
+      // Exclude password before returning the response
+      const { password: _password, ...sanitizedCaptain } = newCaptain;
       logger.info(`New registration attempt for email: ${email}`);
       return { sanitizedCaptain, token };
-      
     });
   } catch (error) {
     logger.error('Error in registerCaptain:', error);
@@ -111,16 +110,15 @@ export const registerCaptain = async (captain: CreateCaptain) => {
       error.code === 'P2002'
     ) {
       const target = error.meta?.target as string[] | undefined;
-    
-      if (target && target.includes('plate')) {
-        throw new AuthError(`Vehicle with plate already exists`, 409);
+
+      if (target?.includes('plate')) {
+        throw new AuthError('Vehicle with plate already exists', 409);
       }
-    
-      if (target && target.includes('email')) {
-        throw new AuthError(`Email already registered`, 409);
+
+      if (target?.includes('email')) {
+        throw new AuthError('Email already registered', 409);
       }
     }
-    
 
     // Re-throw AuthErrors or return a generic failure message
     if (error instanceof AuthError) {
@@ -131,7 +129,6 @@ export const registerCaptain = async (captain: CreateCaptain) => {
   }
 };
 
-
 // Login a captain
 export const loginCaptain = async (captain: LoginCaptain) => {
   const { email, password } = captain;
@@ -141,8 +138,8 @@ export const loginCaptain = async (captain: LoginCaptain) => {
       where: { email: email.toLowerCase() },
       include: {
         location: true,
-        vehicle: true
-      }
+        vehicle: true,
+      },
     });
 
     if (!existingCaptain) {
@@ -162,8 +159,9 @@ export const loginCaptain = async (captain: LoginCaptain) => {
       throw new AuthError('Captain is inactive', 403);
     }
 
-    const { password: _, ...sanitizedCaptain } = existingCaptain;
-    
+    // Exclude password before returning the response
+    const { password: _password, ...sanitizedCaptain } = existingCaptain;
+
     const token = jwt.sign(
       { id: existingCaptain.id, email: existingCaptain.email },
       JWT_SECRET,
@@ -172,9 +170,8 @@ export const loginCaptain = async (captain: LoginCaptain) => {
 
     return {
       captain: sanitizedCaptain,
-      token
+      token,
     };
-
   } catch (error) {
     if (error instanceof AuthError) {
       throw error;

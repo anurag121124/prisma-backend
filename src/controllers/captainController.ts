@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 import { registerCaptain, loginCaptain } from '../services/captainService';
 import { registerSchemaCaptain, loginSchema } from '../utils/validation';
 import { AuthError } from '../utils/errors';
-import { generateToken } from '../utils/jwtUtils';
 import { logger } from '../utils/logger';
 export const registerCaptainController = async (
   req: Request,

@@ -1,5 +1,4 @@
 import bcrypt from 'bcryptjs';
-import { User } from '../types/types';
 import { AUTH_CONSTANTS } from './constants';
 
   

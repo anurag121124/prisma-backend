@@ -1,10 +1,7 @@
 import prisma from "../config/prisma";
 import { User } from "../types/types"; // Ensure correct import with named export
-import bcrypt from 'bcryptjs';
+import bcrypt from "bcryptjs";
 import { hashPassword } from "../utils/passwordUtils";
-import { Jwt } from "jsonwebtoken";
-
-
 
 export const loginUser = async (email: string, password: string) => {
   try {
@@ -27,11 +24,11 @@ export const loginUser = async (email: string, password: string) => {
     }
 
     // Step 5: Return the user excluding sensitive information like password
-    const { password: _, ...userWithoutPassword } = user;
+    const { password: _password, ...userWithoutPassword } = user;
     return userWithoutPassword;
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error in loginUser:", error);
-    throw new Error(`Error in loginUser: ${error.message}`);
+    throw new Error(`Error in loginUser: ${(error as Error).message}`);
   }
 };
 
@@ -43,15 +40,14 @@ export const registerUser = async (user: User) => {
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
+
     if (existingUser) {
       throw new Error("User already exists");
     }
 
     // Hash the password (if necessary, though Firebase handles this)
     const hashedPassword = await hashPassword(password);
-    console.log(hashPassword,"hashPassword")
-
-    
+    console.log("Hashed Password:", hashedPassword);
 
     // Step 2: Create a new user in the database
     const newUser = await prisma.user.create({
@@ -66,10 +62,8 @@ export const registerUser = async (user: User) => {
     });
 
     return newUser;
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error in registerUser:", error);
-    throw new Error(`Error in registerUser: ${error.message}`);
+    throw new Error(`Error in registerUser: ${(error as Error).message}`);
   }
 };
-
-
