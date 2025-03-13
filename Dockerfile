@@ -1,26 +1,24 @@
 FROM node:18-alpine
 
-# Set the working directory inside the container
 WORKDIR /src
 
-# Copy package.json and package-lock.json first for dependency installation
+# Copy package files first (to optimize Docker layer caching)
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install --production
+# Install dependencies (including TypeScript)
+RUN npm install && npm install -g typescript
 
-# Copy the rest of the application
+# Copy all project files
 COPY . .
 
-# Copy the .env file (ensure it's included only in builds)
+# Copy environment variables
 COPY .env .env
 
-# Build the TypeScript code
+# Build TypeScript project
 RUN npm run build
 
-# Expose the application port
+# Expose the correct port
 EXPOSE 4000
 
-# Start the application
+# Run the server
 CMD ["node", "dist/server.js"]
-
