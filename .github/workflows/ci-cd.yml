@@ -41,18 +41,18 @@ jobs:
         with:
           project_id: innate-rite-447114-h4
 
-      # Step 7: Run Prisma Migrations
+      # Step 7: Run Prisma Migrations (For Production Use `migrate deploy`)
       - name: Run Prisma migrations
-        run: npm run prisma:migrate
+        run: npx prisma migrate deploy
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
-      # Step 8: Build and Push Docker Image to Google Container Registry
+      # Step 8: Build & Push Docker Image
       - name: Build and Push Docker Image
         run: |
           gcloud builds submit --tag gcr.io/innate-rite-447114-h4/prisma-backend
 
-      # Step 9: Deploy to Cloud Run
+      # Step 9: Deploy to Cloud Run with Cloud SQL Instance
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy prisma-backend \
@@ -60,5 +60,5 @@ jobs:
             --platform managed \
             --region us-central1 \
             --allow-unauthenticated \
-            --add-cloudsql-instances innate-rite-447114-h4:us-central1:reparo \
-            --set-env-vars DATABASE_URL=${{ secrets.DATABASE_URL }}
+            --add-cloudsql-instances=innate-rite-447114-h4:us-central1:reparo \
+            --set-env-vars DATABASE_URL=${{ secrets.DATABASE_URL }},INSTANCE_CONNECTION_NAME=innate-rite-447114-h4:us-central1:reparo
