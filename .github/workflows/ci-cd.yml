@@ -39,33 +39,33 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
         with:
-          project_id: innate-rite-447114-h4
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
 
       # Step 7: Download and Start Cloud SQL Proxy
       - name: Download Cloud SQL Proxy
         run: |
           wget https://storage.googleapis.com/cloudsql-proxy/v1.33.3/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
           chmod +x cloud_sql_proxy
-          ./cloud_sql_proxy -instances=innate-rite-447114-h4:us-central1:reparo -dir=/cloudsql &
+          ./cloud_sql_proxy -instances=${{ secrets.CLOUD_SQL_INSTANCE }} -dir=/cloudsql &
 
-      # Step 8: Run Prisma Migrations (For Production Use `migrate deploy`)
+      # Step 8: Run Prisma Migrations
       - name: Run Prisma migrations
         run: npx prisma migrate deploy
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_URL: "postgresql://${{ secrets.DATABASE_USER_GCP }}:${{ secrets.DATABASE_PASSWORD_GCP }}@${{ secrets.DATABASE_HOST_GCP }}:${{ secrets.DATABASE_PORT_GCP }}/${{ secrets.DATABASE_NAME_GCP }}"
 
       # Step 9: Build & Push Docker Image
       - name: Build and Push Docker Image
         run: |
-          gcloud builds submit --tag gcr.io/innate-rite-447114-h4/prisma-backend
+          gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/prisma-backend
 
       # Step 10: Deploy to Cloud Run
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy prisma-backend \
-            --image gcr.io/innate-rite-447114-h4/prisma-backend \
+            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/prisma-backend \
             --platform managed \
             --region us-central1 \
             --allow-unauthenticated \
-            --add-cloudsql-instances=innate-rite-447114-h4:us-central1:reparo \
-            --set-env-vars DATABASE_URL=${{ secrets.DATABASE_URL }}
+            --add-cloudsql-instances=${{ secrets.CLOUD_SQL_INSTANCE }} \
+            --set-env-vars DATABASE_URL="postgresql://${{ secrets.DATABASE_USER_GCP }}:${{ secrets.DATABASE_PASSWORD_GCP }}@${{ secrets.DATABASE_HOST_GCP }}:${{ secrets.DATABASE_PORT_GCP }}/${{ secrets.DATABASE_NAME_GCP }}"
