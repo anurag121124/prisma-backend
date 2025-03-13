@@ -1,4 +1,4 @@
-name: Deploy to Render
+name: Deploy to Google Cloud Run
 
 on:
   push:
@@ -29,17 +29,36 @@ jobs:
       - name: Build project
         run: npm run build
 
-      # Step 5: Run Prisma migrations
+      # Step 5: Authenticate with Google Cloud
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      # Step 6: Set up Google Cloud SDK
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: innate-rite-447114-h4
+
+      # Step 7: Run Prisma Migrations
       - name: Run Prisma migrations
         run: npm run prisma:migrate
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}  # Add your secret environment variable here
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
-      # Step 6: Deploy to Render
-      - name: Deploy to Render
+      # Step 8: Build and Push Docker Image to Google Container Registry
+      - name: Build and Push Docker Image
         run: |
-          curl -X POST \
-            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d '{"serviceId": "your-service-id"}' \
-            https://api.render.com/v1/services/restart
+          gcloud builds submit --tag gcr.io/innate-rite-447114-h4/prisma-backend
+
+      # Step 9: Deploy to Cloud Run
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy prisma-backend \
+            --image gcr.io/innate-rite-447114-h4/prisma-backend \
+            --platform managed \
+            --region us-central1 \
+            --allow-unauthenticated \
+            --add-cloudsql-instances innate-rite-447114-h4:us-central1:reparo \
+            --set-env-vars DATABASE_URL=${{ secrets.DATABASE_URL }}

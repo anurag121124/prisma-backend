@@ -100,30 +100,9 @@ class App {
 
     const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
-    const authenticateSwagger = (
-      req: Request,
-      res: Response,
-      next: NextFunction
-    ): void => {
-      const authHeader = req.headers.authorization;
-
-      if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        res.status(401).json({ error: "Unauthorized access to API documentation" });
-        return;
-      }
-
-      const token = authHeader.split(" ")[1];
-      try {
-        verifyToken(token);
-        next();
-      } catch {
-        res.status(401).json({ error: "Invalid or expired token" });
-      }
-    };
 
     this.app.use(
       "/api-docs",
-      (req: Request, res: Response, next: NextFunction) => authenticateSwagger(req, res, next), // Explicitly match middleware signature
       swaggerUi.serve,
       swaggerUi.setup(swaggerSpec, {
         explorer: true,
