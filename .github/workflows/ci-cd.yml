@@ -41,18 +41,25 @@ jobs:
         with:
           project_id: innate-rite-447114-h4
 
-      # Step 7: Run Prisma Migrations (For Production Use `migrate deploy`)
+      # Step 7: Download and Start Cloud SQL Proxy
+      - name: Download Cloud SQL Proxy
+        run: |
+          wget https://storage.googleapis.com/cloudsql-proxy/v1.33.3/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
+          chmod +x cloud_sql_proxy
+          ./cloud_sql_proxy -instances=innate-rite-447114-h4:us-central1:reparo -dir=/cloudsql &
+
+      # Step 8: Run Prisma Migrations (For Production Use `migrate deploy`)
       - name: Run Prisma migrations
         run: npx prisma migrate deploy
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
-      # Step 8: Build & Push Docker Image
+      # Step 9: Build & Push Docker Image
       - name: Build and Push Docker Image
         run: |
           gcloud builds submit --tag gcr.io/innate-rite-447114-h4/prisma-backend
 
-      # Step 9: Deploy to Cloud Run with Cloud SQL Instance
+      # Step 10: Deploy to Cloud Run
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy prisma-backend \
@@ -61,4 +68,4 @@ jobs:
             --region us-central1 \
             --allow-unauthenticated \
             --add-cloudsql-instances=innate-rite-447114-h4:us-central1:reparo \
-            --set-env-vars DATABASE_URL=${{ secrets.DATABASE_URL }},INSTANCE_CONNECTION_NAME=innate-rite-447114-h4:us-central1:reparo
+            --set-env-vars DATABASE_URL=${{ secrets.DATABASE_URL }}
