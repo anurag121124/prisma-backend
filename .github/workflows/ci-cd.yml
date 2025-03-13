@@ -36,12 +36,11 @@ jobs:
         run: |
           wget https://storage.googleapis.com/cloudsql-proxy/v1.33.3/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
           chmod +x cloud_sql_proxy
-          ./cloud_sql_proxy -instances=${{ secrets.CLOUD_SQL_INSTANCE }}=tcp:5432 &
+          ./cloud_sql_proxy -instances=${{ secrets.CLOUD_SQL_INSTANCE }} -dir=/cloudsql &
 
-          - name: Build and Push Docker Image
-          run: |
-            gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/prisma-backend
-        
+      - name: Build and Push Docker Image
+        run: |
+          gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/prisma-backend
 
       - name: Deploy to Cloud Run
         run: |
@@ -51,4 +50,4 @@ jobs:
             --region us-central1 \
             --allow-unauthenticated \
             --add-cloudsql-instances=${{ secrets.CLOUD_SQL_INSTANCE }} \
-            --set-env-vars DATABASE_URL=${{ secrets.DATABASE_URL_GCP }}
+            --set-env-vars DATABASE_URL="postgresql://${{ secrets.DATABASE_USER_GCP }}:${{ secrets.DATABASE_PASSWORD_GCP }}@127.0.0.1:5432/${{ secrets.DATABASE_NAME_GCP }}"
