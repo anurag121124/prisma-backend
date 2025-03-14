@@ -1,7 +1,6 @@
 import { z } from 'zod';
 import { AUTH_CONSTANTS } from './constants';
-import { CaptainStatus, VehicleType } from '@prisma/client';
-
+import { CaptainStatus, VehicleType } from '../types/types';
 export const locationSchema = z.object({
   latitude: z.number()
     .min(-90, 'Latitude must be between -90 and 90')

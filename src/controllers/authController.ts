@@ -128,7 +128,7 @@ export const getUserById = async (req: Request, res: Response): Promise<void> =>
 
 export const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
-    const users = await prisma.user.findMany();
+    const users: User[] = await prisma.user.findMany();
 
     if (users.length === 0) {
       res.status(404).json({ message: "No users found" });
@@ -137,7 +137,7 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
 
     res.status(200).json({
       message: "Users retrieved successfully",
-      users: users.map(user => ({
+      users: users.map((user: User) => ({
         id: user.id,
         email: user.email,
         firebaseId: user.firebaseId,

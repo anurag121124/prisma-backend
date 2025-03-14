@@ -1,10 +1,31 @@
-import {  RideStatus, CaptainStatus, VehicleType } from '@prisma/client';
 import  {  JwtPayload } from 'jsonwebtoken';
 
+export enum RideStatus {
+  PENDING = "PENDING",
+  ACCEPTED = "ACCEPTED",
+  STARTED = "STARTED",
+  COMPLETED = "COMPLETED",
+  CANCELLED = "CANCELLED"
+}
+
+export enum CaptainStatus {
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  SUSPENDED = "SUSPENDED",
+  BUSY = "BUSY"
+}
+
+export enum VehicleType {
+  SEDAN = "SEDAN",
+  SUV = "SUV",
+  HATCHBACK = "HATCHBACK",
+  BIKE = "BIKE"
+}
 // Initialize Prisma Client
 
 // Types for the User model
 export type User = {
+  id: string;
   email: string;
   fullName: string;
   socketId: string | null;

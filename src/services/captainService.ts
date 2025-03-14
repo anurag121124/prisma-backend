@@ -6,7 +6,7 @@ import { hashPassword, comparePasswords } from '../utils/passwordUtils';
 import { AUTH_CONSTANTS } from '../utils/constants';
 import { logger } from '../utils/logger';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-
+import { User } from '../types/types';
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -19,7 +19,7 @@ export const registerCaptain = async (captain: CreateCaptain) => {
   const { email, firstName, lastName, socketId, password, location, vehicle, status } = captain;
 
   try {
-    return await prisma.$transaction(async (tx) => {
+    return await prisma.$transaction(async (tx:any) => {
       // Check if the email is already registered
       const existingCaptain = await tx.captain.findFirst({
         where: {
