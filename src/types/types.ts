@@ -25,7 +25,7 @@ export enum VehicleType {
 
 // Types for the User model
 export type User = {
-  id: string;
+  id?: string;
   email: string;
   fullName: string;
   socketId: string | null;

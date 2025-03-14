@@ -1,0 +1,17 @@
+steps:
+  # Step 1: Build the Docker image
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["buildx", "build", "--platform=linux/amd64", "-t", "gcr.io/innate-rite-447114-h4/backend:$SHORT_SHA", "--push", "."]
+  
+  # Step 2: Deploy to Google Cloud Run
+  - name: "gcr.io/cloud-builders/gcloud"
+    args: [
+      "run", "deploy", "backend-service",
+      "--image", "gcr.io/innate-rite-447114-h4/backend:$SHORT_SHA",
+      "--platform", "managed",
+      "--region", "asia-south1",
+      "--allow-unauthenticated"
+    ]
+
+images:
+  - "gcr.io/innate-rite-447114-h4/backend:$SHORT_SHA"

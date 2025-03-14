@@ -1,26 +1,21 @@
-FROM node:18-alpine
+# Use official Node.js LTS image
+FROM node:18
 
-# Set the working directory inside the container
-WORKDIR /src
+# Set working directory inside the container
+WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json first for dependency installation
+# Copy package files and install dependencies
 COPY package*.json ./
+RUN npm install --only=production
 
-# Install dependencies
-RUN npm ci
-
-# Copy the rest of the application
+# Copy the rest of the application files
 COPY . .
 
-# Copy the .env file (ensure it's included only in builds)
-COPY .env .env
-
-# Build the TypeScript code
+# Build the TypeScript project
 RUN npm run build
 
-# Expose the application port
-EXPOSE 4000
+# Expose the port that Express listens on
+EXPOSE 8080
 
 # Start the application
 CMD ["node", "dist/server.js"]
-
