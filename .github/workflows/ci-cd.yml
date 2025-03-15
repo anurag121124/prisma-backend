@@ -64,7 +64,7 @@ jobs:
 
       - name: Authenticate with GKE
         run: |
-          gcloud container clusters get-credentials my-cluster --region=us-central1
+          gcloud container clusters get-credentials prisma-backend --region=us-central1
 
       - name: Deploy to GKE
         run: |
