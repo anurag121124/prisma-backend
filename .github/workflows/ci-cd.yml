@@ -38,14 +38,14 @@ jobs:
           wget https://storage.googleapis.com/cloudsql-proxy/v1.33.3/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
           chmod +x cloud_sql_proxy
           ./cloud_sql_proxy -instances=${{ secrets.CLOUD_SQL_INSTANCE }}=tcp:5432 &
-          sleep 20 # Increased sleep time
+          sleep 10 # Give it time to start
 
       - name: Debug Cloud SQL Proxy
-        run: ps aux | grep cloud_sql_proxy
+        run: sleep 5 && ps aux | grep cloud_sql_proxy
 
       - name: Test Database Connection
         run: |
-          PGPASSWORD="anuragsingh" psql -h 127.0.0.1 -U postgres -d postgres -p 5432 -c "SELECT 1;"
+          PGPASSWORD="anuragsingh" psql -h 34.68.128.8 -U postgres -d postgres -p 5432 -c "SELECT 1;"
         env:
           PGUSER: "postgres"
           PGPASSWORD: "anuragsingh"
@@ -55,7 +55,7 @@ jobs:
           npm install -g prisma
           npx prisma migrate deploy
         env:
-          DATABASE_URL: "postgresql://postgres:anuragsingh@127.0.0.1:5432/postgres"
+          DATABASE_URL: "postgresql://postgres:anuragsingh@34.68.128.8:5432/postgres"
 
       - name: Build and Push Docker Image
         run: |
