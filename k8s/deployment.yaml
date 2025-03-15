@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prisma-backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: prisma-backend
+  template:
+    metadata:
+      labels:
+        app: prisma-backend
+    spec:
+      containers:
+        - name: prisma-backend
+          image: gcr.io/YOUR_PROJECT_ID/prisma-backend:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://postgres:anuragsingh@34.68.128.8:5432/postgres"

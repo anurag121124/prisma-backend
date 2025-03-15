@@ -1,4 +1,4 @@
-name: Deploy to Google Cloud Run
+name: Deploy to Google Kubernetes Engine
 
 on:
   push:
@@ -38,7 +38,7 @@ jobs:
           wget https://storage.googleapis.com/cloudsql-proxy/v1.33.3/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
           chmod +x cloud_sql_proxy
           ./cloud_sql_proxy -instances=${{ secrets.CLOUD_SQL_INSTANCE }}=tcp:5432 &
-          sleep 10 # Give it time to start
+          sleep 10
 
       - name: Debug Cloud SQL Proxy
         run: sleep 5 && ps aux | grep cloud_sql_proxy
@@ -62,15 +62,12 @@ jobs:
           docker buildx build --platform=linux/amd64 \
             -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/prisma-backend:$GITHUB_SHA --push .
 
-      - name: Debug Cloud Build Logs
-        run: gcloud builds list --limit=5
-
-      - name: Deploy to Cloud Run
+      - name: Authenticate with GKE
         run: |
-          gcloud run deploy prisma-backend \
-            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/prisma-backend:$GITHUB_SHA \
-            --platform managed \
-            --region us-central1 \
-            --allow-unauthenticated \
-            --add-cloudsql-instances=${{ secrets.CLOUD_SQL_INSTANCE }} \
-            --set-env-vars DATABASE_URL="postgresql://postgres:anuragsingh@/cloudsql/${{ secrets.CLOUD_SQL_INSTANCE }}/postgres"
+          gcloud container clusters get-credentials my-cluster --region=us-central1
+
+      - name: Deploy to GKE
+        run: |
+          kubectl apply -f k8s/deployment.yaml
+          kubectl apply -f k8s/service.yaml
+          kubectl rollout status deployment/prisma-backend
