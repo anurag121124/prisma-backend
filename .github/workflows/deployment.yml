@@ -1,78 +1,73 @@
-name: Deploy to Google Kubernetes Engine
+name: Deploy to Google Cloud Run
+
 on:
   push:
     branches:
       - master
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm install
-      
+
       - name: Authenticate with Google Cloud
         run: |
           echo '${{ secrets.GCP_SA_KEY }}' > /tmp/gcp-key.json
           gcloud auth activate-service-account --key-file=/tmp/gcp-key.json
           gcloud auth configure-docker gcr.io
-      
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
-      
+
       - name: Install Cloud SQL Auth Proxy
         run: |
           wget https://storage.googleapis.com/cloudsql-proxy/v1.33.3/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
           chmod +x cloud_sql_proxy
           ./cloud_sql_proxy -instances=${{ secrets.CLOUD_SQL_INSTANCE }}=tcp:5432 &
-          sleep 10
-      
+          sleep 10 # Give it time to start
       - name: Debug Cloud SQL Proxy
         run: sleep 5 && ps aux | grep cloud_sql_proxy
-      
+
       - name: Test Database Connection
         run: |
-          PGPASSWORD="${{ secrets.DB_PASSWORD }}" psql -h 34.68.128.8 -U postgres -d postgres -p 5432 -c "SELECT 1;"
+          PGPASSWORD="anuragsingh" psql -h 34.68.128.8 -U postgres -d postgres -p 5432 -c "SELECT 1;"
         env:
           PGUSER: "postgres"
-          PGPASSWORD: "${{ secrets.DB_PASSWORD }}"
-      
+          PGPASSWORD: "anuragsingh"
+
       - name: Run Prisma Migrations
         run: |
           npm install -g prisma
           npx prisma migrate deploy
         env:
-          DATABASE_URL: "postgresql://postgres:${{ secrets.DB_PASSWORD }}@34.68.128.8:5432/postgres"
-      
+          DATABASE_URL: "postgresql://postgres:anuragsingh@34.68.128.8:5432/postgres"
+
       - name: Build and Push Docker Image
         run: |
           docker buildx build --platform=linux/amd64 \
             -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/prisma-backend:$GITHUB_SHA --push .
-      
-      - name: Install GKE auth plugin
+      - name: Debug Cloud Build Logs
+        run: gcloud builds list --limit=5
+
+      - name: Deploy to Cloud Run
         run: |
-          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-          sudo apt-get update
-          sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
-          echo "export USE_GKE_GCLOUD_AUTH_PLUGIN=True" >> $GITHUB_ENV
-      
-      - name: Authenticate with GKE
-        run: |
-          gcloud container clusters get-credentials prisma-backend --region=us-central1
-      
-      - name: Deploy to GKE
-        run: |
-          kubectl apply -f k8s/deployment.yaml
-          kubectl apply -f k8s/service.yaml
-          kubectl rollout status deployment/prisma-backend
+          gcloud run deploy prisma-backend \
+            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/prisma-backend:$GITHUB_SHA \
+            --platform managed \
+            --region us-central1 \
+            --allow-unauthenticated \
+            --add-cloudsql-instances=${{ secrets.CLOUD_SQL_INSTANCE }} \
+            --set-env-vars DATABASE_URL="postgresql://postgres:anuragsingh@/cloudsql/${{ secrets.CLOUD_SQL_INSTANCE }}/postgres"
