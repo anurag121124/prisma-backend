@@ -65,15 +65,11 @@ jobs:
       - name: Install `gke-gcloud-auth-plugin`
         run: |
           sudo apt-get update && sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
-          echo "export USE_GKE_GCLOUD_AUTH_PLUGIN=True" >> $HOME/.bashrc
-          echo "export KUBECONFIG=$HOME/.kube/config" >> $HOME/.bashrc
-          source $HOME/.bashrc
+          echo "export USE_GKE_GCLOUD_AUTH_PLUGIN=True" >> $GITHUB_ENV
 
       - name: Authenticate with GKE
         run: |
           gcloud container clusters get-credentials prisma-backend --region=us-central1
-          echo "Checking Kubernetes Context:"
-          kubectl config current-context
 
       - name: Deploy to GKE
         run: |
