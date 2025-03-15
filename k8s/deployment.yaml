@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: prisma-backend
-          image: gcr.io/YOUR_PROJECT_ID/prisma-backend:latest
+          image: gcr.io/innate-rite-447114-h4/prisma-backend:5026/prisma-backend:latest
           ports:
             - containerPort: 3000
           env:
