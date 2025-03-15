@@ -38,10 +38,10 @@ jobs:
           wget https://storage.googleapis.com/cloudsql-proxy/v1.33.3/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
           chmod +x cloud_sql_proxy
           ./cloud_sql_proxy -instances=${{ secrets.CLOUD_SQL_INSTANCE }}=tcp:5432 &
-          sleep 10 # Give it time to start
+          sleep 20 # Increased sleep time
 
       - name: Debug Cloud SQL Proxy
-        run: sleep 5 && ps aux | grep cloud_sql_proxy
+        run: ps aux | grep cloud_sql_proxy
 
       - name: Test Database Connection
         run: |
