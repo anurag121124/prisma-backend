@@ -40,11 +40,15 @@ jobs:
           ./cloud_sql_proxy -instances=${{ secrets.CLOUD_SQL_INSTANCE }}=tcp:5432 &
         
       - name: Debug Cloud SQL Proxy
-        run: sleep 5 && ps aux | grep cloud_sql_proxy
+        run: |
+          sleep 5
+          echo "Checking if Cloud SQL Proxy is running..."
+          ps aux | grep cloud_sql_proxy
 
       - name: Test Database Connectivity
         run: |
           sudo apt update && sudo apt install -y postgresql-client
+          echo "Testing PostgreSQL connection..."
           PGPASSWORD=${{ secrets.DATABASE_PASSWORD_GCP }} psql -h 127.0.0.1 -U ${{ secrets.DATABASE_USER_GCP }} -d ${{ secrets.DATABASE_NAME_GCP }} -c "\dt"
       
       - name: Run Prisma Migrations
