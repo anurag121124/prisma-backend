@@ -11,6 +11,9 @@ RUN npm install --only=production
 # Copy the rest of the application files
 COPY . .
 
+# Generate Prisma client - this is essential for Prisma to work
+RUN npx prisma generate
+
 # Build the TypeScript project
 RUN npm run build
 
