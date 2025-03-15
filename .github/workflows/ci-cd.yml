@@ -37,11 +37,16 @@ jobs:
         run: |
           wget https://storage.googleapis.com/cloudsql-proxy/v1.33.3/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
           chmod +x cloud_sql_proxy
-          ./cloud_sql_proxy -dir=/cloudsql -instances=${{ secrets.CLOUD_SQL_INSTANCE }} &
+          ./cloud_sql_proxy -instances=${{ secrets.CLOUD_SQL_INSTANCE }}=tcp:5432 &
         
       - name: Debug Cloud SQL Proxy
         run: sleep 5 && ps aux | grep cloud_sql_proxy
-        
+
+      - name: Test Database Connectivity
+        run: |
+          sudo apt update && sudo apt install -y postgresql-client
+          PGPASSWORD=${{ secrets.DATABASE_PASSWORD_GCP }} psql -h 127.0.0.1 -U ${{ secrets.DATABASE_USER_GCP }} -d ${{ secrets.DATABASE_NAME_GCP }} -c "\dt"
+      
       - name: Run Prisma Migrations
         run: |
           npm install -g prisma
