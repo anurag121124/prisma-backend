@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prisma-backend
+  labels:
+    app: prisma-backend
 spec:
   replicas: 3
   selector:
@@ -14,9 +16,13 @@ spec:
     spec:
       containers:
         - name: prisma-backend
-          image: gcr.io/innate-rite-447114-h4/prisma-backend:5026/prisma-backend:latest
+          image: gcr.io/innate-rite-447114-h4/prisma-backend:v1
+          imagePullPolicy: Always
           ports:
-            - containerPort: 3000
+            - containerPort: 8080
           env:
             - name: DATABASE_URL
-              value: "postgresql://postgres:anuragsingh@34.68.128.8:5432/postgres"
+              valueFrom:
+                secretKeyRef:
+                  name: database-secrets
+                  key: DATABASE_URL

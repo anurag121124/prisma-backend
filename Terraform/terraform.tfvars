@@ -1,0 +1,12 @@
+gcp_sa_key         = "./innate-rite-447114-h4-ec655ceb4503.json"
+project_id         = "innate-rite-447114-h4"
+region            = "us-central1"
+service_name      = "prisma-backend"
+image_url         = "gcr.io/innate-rite-447114-h4/backend:v1"
+cloudsql_instance = "innate-rite-447114-h4:us-central1:reparo"
+
+database_user     = "postgres"
+database_password = "anuragsingh"
+database_host     = "34.68.128.8"
+database_name     = "postgres"
+database_port     = "5432"
