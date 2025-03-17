@@ -1,31 +1,83 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/configuration-reference
 version: 2.1
 
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
-jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/executor-intro/ & https://circleci.com/docs/configuration-reference/#executor-job
+executors:
+  default:
     docker:
-      # Specify the version you desire here
-      # See: https://circleci.com/developer/images/image/cimg/base
-      - image: cimg/base:current
+      - image: circleci/node:18
 
-    # Add steps to the job
-    # See: https://circleci.com/docs/jobs-steps/#steps-overview & https://circleci.com/docs/configuration-reference/#steps
+jobs:
+  deploy:
+    executor: default
+    environment:
+      DATABASE_URL: "postgresql://postgres:anuragsingh@34.68.128.8:5432/postgres"
+      PGUSER: "postgres"
+      PGPASSWORD: "anuragsingh"
     steps:
-      # Checkout the code as the first step.
       - checkout
-      - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
 
-# Orchestrate jobs using workflows
-# See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
+      - run:
+          name: Install dependencies
+          command: npm install
+
+      - run:
+          name: Create .env File
+          command: |
+            echo "PORT=$PORT" >> .env
+            echo "NODE_ENV=$NODE_ENV" >> .env
+            echo "API_URL=$API_URL" >> .env
+            echo "CORS_ORIGIN=$CORS_ORIGIN" >> .env
+            echo "RATE_LIMIT_WINDOW=$RATE_LIMIT_WINDOW" >> .env
+            echo "RATE_LIMIT_MAX=$RATE_LIMIT_MAX" >> .env
+            echo "SWAGGER_ENABLED=$SWAGGER_ENABLED" >> .env
+            echo "DATABASE_URL=$DATABASE_URL" >> .env
+            echo "JWT_SECRET=$JWT_SECRET" >> .env
+            echo "FIREBASE_ADMIN_CREDENTIALS=$FIREBASE_ADMIN_CREDENTIALS" >> .env
+
+      - run:
+          name: Authenticate with Google Cloud
+          command: |
+            echo "$GCP_SA_KEY" > /tmp/gcp-key.json
+            gcloud auth activate-service-account --key-file=/tmp/gcp-key.json
+            gcloud auth configure-docker gcr.io
+
+      - run:
+          name: Install Cloud SQL Auth Proxy
+          command: |
+            wget https://storage.googleapis.com/cloudsql-proxy/v1.33.3/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
+            chmod +x cloud_sql_proxy
+            ./cloud_sql_proxy -instances=$CLOUD_SQL_INSTANCE=tcp:5432 &
+            sleep 10
+
+      - run:
+          name: Test Database Connection
+          command: |
+            PGPASSWORD="$PGPASSWORD" psql -h 34.68.128.8 -U postgres -d postgres -p 5432 -c "SELECT 1;"
+
+      - run:
+          name: Run Prisma Migrations
+          command: |
+            npm install -g prisma
+            npx prisma migrate deploy
+
+      - run:
+          name: Build and Push Docker Image
+          command: |
+            docker buildx build --platform=linux/amd64 \
+              -t gcr.io/$GCP_PROJECT_ID/prisma-backend:$CIRCLE_SHA1 --push .
+
+      - run:
+          name: Deploy to Cloud Run
+          command: |
+            gcloud run deploy prisma-backend \
+              --image gcr.io/$GCP_PROJECT_ID/prisma-backend:$CIRCLE_SHA1 \
+              --platform managed \
+              --region us-central1 \
+              --allow-unauthenticated \
+              --add-cloudsql-instances=$CLOUD_SQL_INSTANCE \
+              --set-env-vars DATABASE_URL="postgresql://postgres:anuragsingh@/cloudsql/$CLOUD_SQL_INSTANCE/postgres"
+
 workflows:
-  say-hello-workflow: # This is the name of the workflow, feel free to change it to better match your workflow.
-    # Inside the workflow, you define the jobs you want to run.
+  version: 2
+  deploy:
     jobs:
-      - say-hello
+      - deploy
