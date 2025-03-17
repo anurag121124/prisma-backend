@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Exit immediately if any command fails
+set -e
+
+echo "🚀 Bumping version..."
+npm version patch --no-git-tag-version
+
+# echo "🔍 Running lint checks..."
+# npm run lint
+
+echo "🛠️ Running build..."
+npm run build
+
+echo "📌 Staging version changes..."
+git add package.json package-lock.json
+
+
+echo "🏷️ Tagging the commit..."
+VERSION=$(node -p "require('./package.json').version")
+git tag "v$VERSION"
+
+echo "✅ Pre-commit hook executed successfully!"

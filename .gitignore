@@ -3,3 +3,5 @@ backend
 assets/service
 assets/service/backendcab-firebase-adminsdk-tqyn7-1f04093be3.json
 Terraform/innate-rite-447114-h4-ec655ceb4503.json
+/dist
+dist/app.js
