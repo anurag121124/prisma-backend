@@ -1,13 +1,13 @@
 {
   "name": "backend",
-  "version": "6.0.92",
+  "version": "6.0.93",
   "main": "dist/server.js",
   "scripts": {
     "start": "node dist/server.js",
     "dev": "nodemon --watch './src/**/*.ts' --exec 'ts-node' ./src/server.ts",
     "build": "tsc",
     "lint": "eslint './src/**/*.{ts,js}' --fix",
-    "test": "mocha --require ts-node/register './__tests__/**/*.test.ts'"
+    "test": "mocha --loader ts-node/esm './__tests__/**/*.test.ts'"
   },
   "keywords": [],
   "author": "",

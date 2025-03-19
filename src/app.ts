@@ -116,6 +116,12 @@ class App {
     this.app.get("/health", (_req, res) => {
       res.status(200).json({ status: "healthy" });
     });
+    this.app.get("/destroy", (_req, res) => {
+      res.send("Shutting down server...");
+      console.log("Destroy route accessed. Server shutting down...");
+      process.exit(0);
+    }
+    );
 
     this.app.use("*", (_req, res) => {
       res.status(404).json({ error: "Route not found" });

@@ -19,10 +19,19 @@ spec:
           image: gcr.io/innate-rite-447114-h4/prisma-backend:v1
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080
+            - containerPort: 3000
           env:
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
-                  name: database-secrets
+                  name: prisma-db-secret
                   key: DATABASE_URL
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+      imagePullSecrets:
+        - name: regcred
