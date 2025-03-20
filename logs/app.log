@@ -336,3 +336,158 @@ Unique constraint failed on the fields: (`plate`)
     at Generator.throw (<anonymous>)
     at rejected (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:6:65)
 2025-03-20 23:55:33 [INFO]: New captain registered: anurag@gmail.com
+2025-03-21 00:24:42 [ERROR]: AuthError: Captain account is not activated
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:132:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:5:58)
+2025-03-21 00:26:21 [ERROR]: AuthError: Captain account is not activated
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:132:13
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:5:58)
+2025-03-21 01:13:40 [ERROR]: Error requesting ride: PrismaClientValidationError: 
+Invalid `prisma.ride.create()` invocation in
+/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/rideService.ts:102:40
+
+   99     fare: number
+  100 ) => {
+  101     try {
+→ 102         const ride = await prisma.ride.create({
+                data: {
+                  userId: "cm8hl1cj80000uh7faqfr5aa2",
+                  pickup: "40.712776,",
+                  destination: "-74.005974",
+                  fare: "120",
+                        ~~~~~
+                  status: "PENDING",
+                  otp: "7349"
+                }
+              })
+
+Argument `fare`: Invalid value provided. Expected Float, provided String.
+2025-03-21 01:13:40 [ERROR]: AuthError: Unable to request ride
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/rideService.ts:115:15
+    at Generator.throw (<anonymous>)
+    at rejected (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/rideService.ts:6:65)
+2025-03-21 01:33:47 [ERROR]: Error accepting ride: PrismaClientKnownRequestError: 
+Invalid `prisma.ride.update()` invocation in
+/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/rideService.ts:25:40
+
+  22  */
+  23 export const acceptRide = async (rideId: string, captainId: string) => {
+  24     try {
+→ 25         const ride = await prisma.ride.update(
+An operation failed because it depends on one or more records that were required but not found. Record to update not found.
+2025-03-21 01:33:47 [ERROR]: AuthError: Unable to accept ride
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/rideService.ts:32:15
+    at Generator.throw (<anonymous>)
+    at rejected (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/rideService.ts:6:65)
+2025-03-21 01:34:09 [ERROR]: Error accepting ride: PrismaClientKnownRequestError: 
+Invalid `prisma.ride.update()` invocation in
+/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/rideService.ts:25:40
+
+  22  */
+  23 export const acceptRide = async (rideId: string, captainId: string) => {
+  24     try {
+→ 25         const ride = await prisma.ride.update(
+An operation failed because it depends on one or more records that were required but not found. Record to update not found.
+2025-03-21 01:34:09 [ERROR]: AuthError: Unable to accept ride
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/rideService.ts:32:15
+    at Generator.throw (<anonymous>)
+    at rejected (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/rideService.ts:6:65)
+2025-03-21 01:35:38 [ERROR]: Error accepting ride: PrismaClientKnownRequestError: 
+Invalid `prisma.ride.update()` invocation in
+/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/rideService.ts:25:40
+
+  22  */
+  23 export const acceptRide = async (rideId: string, captainId: string) => {
+  24     try {
+→ 25         const ride = await prisma.ride.update(
+An operation failed because it depends on one or more records that were required but not found. Record to update not found.
+2025-03-21 01:35:38 [ERROR]: AuthError: Unable to accept ride
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/rideService.ts:32:15
+    at Generator.throw (<anonymous>)
+    at rejected (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/rideService.ts:6:65)
+2025-03-21 01:35:49 [ERROR]: Error accepting ride: PrismaClientKnownRequestError: 
+Invalid `prisma.ride.update()` invocation in
+/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/rideService.ts:25:40
+
+  22  */
+  23 export const acceptRide = async (rideId: string, captainId: string) => {
+  24     try {
+→ 25         const ride = await prisma.ride.update(
+An operation failed because it depends on one or more records that were required but not found. Record to update not found.
+2025-03-21 01:35:50 [ERROR]: AuthError: Unable to accept ride
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/rideService.ts:32:15
+    at Generator.throw (<anonymous>)
+    at rejected (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/rideService.ts:6:65)
+2025-03-21 01:43:53 [ERROR]: Error accepting ride: AuthError: Ride not found or already accepted
+2025-03-21 01:43:53 [ERROR]: AuthError: Unable to accept ride
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/rideService.ts:52:15
+    at Generator.next (<anonymous>)
+    at fulfilled (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/rideService.ts:5:58)
+2025-03-21 01:51:41 [ERROR]: AuthError: Missing required fields
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:109:19
+    at Generator.next (<anonymous>)
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:8:71
+    at new Promise (<anonymous>)
+    at __awaiter (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:4:12)
+    at startRideController (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:103:20)
+    at Layer.handle [as handle_request] (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/layer.js:95:5)
+2025-03-21 01:54:09 [ERROR]: AuthError: Missing required fields
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:109:19
+    at Generator.next (<anonymous>)
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:8:71
+    at new Promise (<anonymous>)
+    at __awaiter (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:4:12)
+    at startRideController (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:103:20)
+    at Layer.handle [as handle_request] (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/layer.js:95:5)
+2025-03-21 01:54:11 [ERROR]: AuthError: Missing required fields
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:109:19
+    at Generator.next (<anonymous>)
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:8:71
+    at new Promise (<anonymous>)
+    at __awaiter (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:4:12)
+    at startRideController (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:103:20)
+    at Layer.handle [as handle_request] (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/layer.js:95:5)
+2025-03-21 01:54:11 [ERROR]: AuthError: Missing required fields
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:109:19
+    at Generator.next (<anonymous>)
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:8:71
+    at new Promise (<anonymous>)
+    at __awaiter (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:4:12)
+    at startRideController (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:103:20)
+    at Layer.handle [as handle_request] (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/layer.js:95:5)
+2025-03-21 02:21:23 [ERROR]: AuthError: Missing required fields
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:146:19
+    at Generator.next (<anonymous>)
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:8:71
+    at new Promise (<anonymous>)
+    at __awaiter (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:4:12)
+    at completeRideController (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:140:20)
+    at Layer.handle [as handle_request] (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/layer.js:95:5)
+2025-03-21 02:21:46 [ERROR]: AuthError: Missing required fields
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:146:19
+    at Generator.next (<anonymous>)
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:8:71
+    at new Promise (<anonymous>)
+    at __awaiter (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:4:12)
+    at completeRideController (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/rideController.ts:140:20)
+    at Layer.handle [as handle_request] (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/layer.js:95:5)
