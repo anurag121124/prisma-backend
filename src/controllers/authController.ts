@@ -132,7 +132,7 @@ export const getUsers = async (req: Request, res: Response): Promise<void> => {
 
     if (users.length === 0) {
       res.status(404).json({ message: "No users found" });
-      return;
+      return; 
     }
 
     res.status(200).json({

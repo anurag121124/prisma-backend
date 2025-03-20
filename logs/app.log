@@ -89,3 +89,250 @@ Unique constraint failed on the fields: (`plate`)
     at async Proxy._transactionWithCallback (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/node_modules/@prisma/client/runtime/library.js:130:7983)
     at async registerCaptain (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/services/captainService.ts:21:12)
     at async registerCaptainController (/Users/anuragsingh/Github Project/Backend/CabBookingNode/Backend/src/controllers/captainController.ts:15:41)
+2025-03-20 22:30:47 [ERROR]: ZodError: [
+  {
+    "received": "CAR",
+    "code": "invalid_enum_value",
+    "options": [
+      "SEDAN",
+      "SUV",
+      "HATCHBACK",
+      "BIKE"
+    ],
+    "path": [
+      "vehicle",
+      "vehicleType"
+    ],
+    "message": "Invalid enum value. Expected 'SEDAN' | 'SUV' | 'HATCHBACK' | 'BIKE', received 'CAR'"
+  }
+]
+    at Object.get error [as error] (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/zod/lib/types.js:55:31)
+    at ZodObject.parse (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/zod/lib/types.js:131:22)
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/captainController.ts:13:49
+    at Generator.next (<anonymous>)
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/captainController.ts:8:71
+    at new Promise (<anonymous>)
+    at __awaiter (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/captainController.ts:4:12)
+    at registerCaptainController (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/captainController.ts:11:20)
+    at Layer.handle [as handle_request] (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/route.js:149:13)
+2025-03-20 22:31:34 [ERROR]: PrismaClientValidationError: 
+Invalid `tx.captain.create()` invocation in
+/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:59:43
+
+  56 const hashedPassword = await hashPassword(password);
+  57 
+  58 // Create the captain and related entities
+→ 59 const newCaptain = await tx.captain.create({
+       data: {
+         email: "anuragsingh11123@gmail.com",
+         firstName: "John",
+         lastName: "Doe",
+         socketId: "abc123xy2",
+         password: "$2a$10$SZv3ftX2FnRvg8y4.O6pruNee85IqPbSXCf.EcHSnZz5Ss2V1wIki",
+         status: "INACTIVE",
+         location: {
+           create: {
+             latitude: 40.712776,
+             longitude: -74.005974
+           }
+         },
+         vehicle: {
+           create: {
+             color: "Red",
+             plate: "UP21CF6958",
+             capacity: 4,
+             vehicleType: "SEDAN"
+                          ~~~~~~~
+           }
+         }
+       },
+       include: {
+         location: true,
+         vehicle: true
+       }
+     })
+
+Invalid value for argument `vehicleType`. Expected VehicleType.
+    at wn (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:29:1363)
+    at qn.handleRequestError (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:121:6958)
+    at qn.handleAndLogRequestError (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:121:6640)
+    at qn.request (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:121:6347)
+    at async l (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:130:9616)
+2025-03-20 22:31:34 [ERROR]: AuthError: Registration failed. Please try again later.
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:128:11
+    at Generator.throw (<anonymous>)
+    at rejected (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:6:65)
+2025-03-20 22:32:02 [ERROR]: PrismaClientValidationError: 
+Invalid `tx.captain.create()` invocation in
+/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:59:43
+
+  56 const hashedPassword = await hashPassword(password);
+  57 
+  58 // Create the captain and related entities
+→ 59 const newCaptain = await tx.captain.create({
+       data: {
+         email: "anuragsingh11123@gmail.com",
+         firstName: "John",
+         lastName: "Doe",
+         socketId: "abc123xy2",
+         password: "$2a$10$ph5F1pTz4g2LuZYtAg8tYexo2zC9Zm7vv5qZLPH7WmAQqh9qLJzhC",
+         status: "INACTIVE",
+         location: {
+           create: {
+             latitude: 40.712776,
+             longitude: -74.005974
+           }
+         },
+         vehicle: {
+           create: {
+             color: "Red",
+             plate: "UP21CF6958",
+             capacity: 4,
+             vehicleType: "SEDAN"
+                          ~~~~~~~
+           }
+         }
+       },
+       include: {
+         location: true,
+         vehicle: true
+       }
+     })
+
+Invalid value for argument `vehicleType`. Expected VehicleType.
+    at wn (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:29:1363)
+    at qn.handleRequestError (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:121:6958)
+    at qn.handleAndLogRequestError (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:121:6640)
+    at qn.request (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:121:6347)
+    at async l (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:130:9616)
+2025-03-20 22:32:02 [ERROR]: AuthError: Registration failed. Please try again later.
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:128:11
+    at Generator.throw (<anonymous>)
+    at rejected (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:6:65)
+2025-03-20 22:34:18 [ERROR]: PrismaClientKnownRequestError: 
+Invalid `tx.captain.create()` invocation in
+/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:59:43
+
+  56 const hashedPassword = await hashPassword(password);
+  57 
+  58 // Create the captain and related entities
+→ 59 const newCaptain = await tx.captain.create(
+Transaction API error: Transaction already closed: A query cannot be executed on an expired transaction. The timeout for this transaction was 5000 ms, however 5268 ms passed since the start of the transaction. Consider increasing the interactive transaction timeout or doing less work in the transaction.
+    at qn.handleRequestError (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at qn.handleAndLogRequestError (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:121:6640)
+    at qn.request (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:121:6347)
+    at async l (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:130:9616)
+2025-03-20 22:34:18 [ERROR]: AuthError: Registration failed. Please try again later.
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:128:11
+    at Generator.throw (<anonymous>)
+    at rejected (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:6:65)
+2025-03-20 22:34:57 [ERROR]: PrismaClientKnownRequestError: 
+Invalid `tx.captain.create()` invocation in
+/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:59:43
+
+  56 const hashedPassword = await hashPassword(password);
+  57 
+  58 // Create the captain and related entities
+→ 59 const newCaptain = await tx.captain.create(
+Transaction API error: Transaction already closed: A query cannot be executed on an expired transaction. The timeout for this transaction was 5000 ms, however 5323 ms passed since the start of the transaction. Consider increasing the interactive transaction timeout or doing less work in the transaction.
+    at qn.handleRequestError (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at qn.handleAndLogRequestError (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:121:6640)
+    at qn.request (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:121:6347)
+    at async l (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:130:9616)
+2025-03-20 22:34:57 [ERROR]: AuthError: Registration failed. Please try again later.
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:128:11
+    at Generator.throw (<anonymous>)
+    at rejected (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:6:65)
+2025-03-20 22:50:41 [INFO]: New captain registered: anuragsingh11123@gmail.com
+2025-03-20 22:51:44 [ERROR]: PrismaClientKnownRequestError: 
+Invalid `tx.captain.create()` invocation in
+/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:25:45
+
+  22 
+  23 return await prisma.$transaction(
+  24   async (tx) => {
+→ 25     const newCaptain = await tx.captain.create(
+Unique constraint failed on the fields: (`email`)
+    at qn.handleRequestError (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at qn.handleAndLogRequestError (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:121:6640)
+    at qn.request (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:121:6347)
+    at async l (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:130:9616)
+2025-03-20 22:51:44 [ERROR]: AuthError: Registration failed. Please try again later.
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:73:11
+    at Generator.throw (<anonymous>)
+    at rejected (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:6:65)
+2025-03-20 23:13:49 [ERROR]: ZodError: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "firstName"
+    ],
+    "message": "Required"
+  },
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "undefined",
+    "path": [
+      "lastName"
+    ],
+    "message": "Required"
+  },
+  {
+    "expected": "'ACTIVE' | 'INACTIVE' | 'SUSPENDED' | 'BUSY'",
+    "received": "undefined",
+    "code": "invalid_type",
+    "path": [
+      "status"
+    ],
+    "message": "Required"
+  }
+]
+    at Object.get error [as error] (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/zod/lib/types.js:55:31)
+    at ZodObject.parse (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/zod/lib/types.js:131:22)
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/captainController.ts:13:49
+    at Generator.next (<anonymous>)
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/captainController.ts:8:71
+    at new Promise (<anonymous>)
+    at __awaiter (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/captainController.ts:4:12)
+    at registerCaptainController (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/controllers/captainController.ts:11:20)
+    at Layer.handle [as handle_request] (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/layer.js:95:5)
+    at next (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/express/lib/router/route.js:149:13)
+2025-03-20 23:54:44 [ERROR]: PrismaClientKnownRequestError: 
+Invalid `tx.captain.create()` invocation in
+/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:25:45
+
+  22 
+  23 return await prisma.$transaction(
+  24   async (tx) => {
+→ 25     const newCaptain = await tx.captain.create(
+Unique constraint failed on the fields: (`email`)
+    at qn.handleRequestError (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at qn.handleAndLogRequestError (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:121:6640)
+    at qn.request (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:121:6347)
+    at async l (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:130:9616)
+2025-03-20 23:54:44 [ERROR]: AuthError: Registration failed. Please try again later.
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:73:11
+    at Generator.throw (<anonymous>)
+    at rejected (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:6:65)
+2025-03-20 23:55:13 [ERROR]: PrismaClientKnownRequestError: 
+Invalid `tx.captain.create()` invocation in
+/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:25:45
+
+  22 
+  23 return await prisma.$transaction(
+  24   async (tx) => {
+→ 25     const newCaptain = await tx.captain.create(
+Unique constraint failed on the fields: (`plate`)
+    at qn.handleRequestError (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:121:7315)
+    at qn.handleAndLogRequestError (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:121:6640)
+    at qn.request (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:121:6347)
+    at async l (/Users/anuragsingh/Github Project/Backend/prisma-backend/node_modules/@prisma/client/runtime/library.js:130:9616)
+2025-03-20 23:55:13 [ERROR]: AuthError: Registration failed. Please try again later.
+    at /Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:73:11
+    at Generator.throw (<anonymous>)
+    at rejected (/Users/anuragsingh/Github Project/Backend/prisma-backend/src/services/captainService.ts:6:65)
+2025-03-20 23:55:33 [INFO]: New captain registered: anurag@gmail.com

@@ -16,10 +16,9 @@ export enum CaptainStatus {
 }
 
 export enum VehicleType {
-  SEDAN = "SEDAN",
-  SUV = "SUV",
-  HATCHBACK = "HATCHBACK",
-  BIKE = "BIKE"
+  CAR = "CAR",
+  MOTORCYCLE = "MOTORCYCLE",
+  AUTO = "AUTO",
 }
 // Initialize Prisma Client
 

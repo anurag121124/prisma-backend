@@ -3,6 +3,7 @@ import { registerCaptain, loginCaptain } from '../services/captainService';
 import { registerSchemaCaptain, loginSchema } from '../utils/validation';
 import { AuthError } from '../utils/errors';
 import { logger } from '../utils/logger';
+
 export const registerCaptainController = async (
   req: Request,
   res: Response,
@@ -32,6 +33,7 @@ export const registerCaptainController = async (
   }
 };
 
+
 export const loginCaptainController = async (
   req: Request,
   res: Response,
@@ -41,6 +43,7 @@ export const loginCaptainController = async (
     const validatedData = loginSchema.parse(req.body); // Validate input data
     const result = await loginCaptain(validatedData); // Pass validated login data to the service
 
+    // Use res.json to send the response
     res.status(200).json({
       success: true,
       message: 'Login successful',
@@ -49,11 +52,13 @@ export const loginCaptainController = async (
 
   } catch (error) {
     if (error instanceof AuthError) {
-      return res.status(error.statusCode).json({
+      // Use res.status to send the error response
+      res.status(error.statusCode).json({
         success: false,
         message: error.message
       });
+      return; // Ensure the function exits after sending the response
     }
-    next(error);
+    next(error); // Pass other errors to the error handler
   }
 };
